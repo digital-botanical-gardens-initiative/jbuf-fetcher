@@ -21,28 +21,28 @@
 
 # projet 3
 
-# nb_vie = 7
+"""nb_vie = 7
 
-# mot_secret = "tortue"
-# mot_public = "_" * len(mot_secret)
+mot_secret = "tortue"
+mot_public = "_" * len(mot_secret)
 
-# while nb_vie > 0 and mot_secret != mot_public:
-# lettre = input("Ecrivez une lettre : ")
+while nb_vie > 0 and mot_secret != mot_public: #Tant que le nombre de vie est plus grand que 0 et que le mots secret est différent du mot publique
+    lettre = input("Ecrivez une lettre : ")
 
-# if lettre in mot_secret:
-# for i in range(len(mot_secret)):
-# if mot_secret[i] == lettre:
-# mot_public = mot_public[:i] + lettre + mot_public[i + 1:]
-# else:
-# nb_vie -= 1
+    if lettre in mot_secret:
+        for i in range(len(mot_secret)): # i = position dans le mot, dans la taille du mot secret
+            if mot_secret[i] == lettre:
+                mot_public = mot_public[:i] + lettre + mot_public[i + 1:]
+    else:
+        nb_vie -= 1
 
-# if mot_public == mot_secret:
-# print("Bravo ! Le mot est" , mot_secret )
-# elif nb_vie == 0:
-# print("Vous avez perdu")
-# else:
-# print("Vous avez " , nb_vie)
-# print( "Le mot est : ", mot_public)
+    if mot_public == mot_secret:
+        print("Bravo ! Le mot est" , mot_secret )
+    elif nb_vie == 0:
+        print("Vous avez perdu")
+    else:
+        print("Vous avez " , nb_vie , "vie(s) restante(s)")
+        print( "Le mot est : ", mot_public)"""
 
 # nb_vies = 7
 
@@ -109,56 +109,57 @@
 # print(nombres.index(3))
 # print(nombres.count(3))
 
-# class Pizza:
-#  def __init__(self, base, prix, diametre, style, ingredients):
-# self.base = base
-# self.prix = prix
-# self.diametre = diametre
-# self. style = style
-# self.ingredients = ingredients
+"""
+class Pizza:
+    def __init__(self, base, prix, diametre, style, ingredients):
+        self.base = base
+        self.prix = prix
+        self.diametre = diametre
+        self. style = style
+        self.ingredients = ingredients
 
-# def ajouter_ingredients(self, nouvel_ingredient):
-# if nouvel_ingredient == "ananas":
-#  raise TypeError("Les ananas ne vont pas sur les pizzas")
-# self.ingredients.append(nouvel_ingredient)
-# self.prix = self.prix + 1
+    def ajouter_ingredients(self, nouvel_ingredient):
+        if nouvel_ingredient == "ananas":
+            raise TypeError("Les ananas ne vont pas sur les pizzas")
+        self.ingredients.append(nouvel_ingredient)
+        self.prix = self.prix + 1
 
-# def servir(self, table):
-# print("j'amène la pizza à la table" , table)
+    def servir(self, table):
+        print("j'amène la pizza à la table" , table)
 
-# def livraison(self, adresse):
-# print("Je livre la pizza à l'adresse", adresse)
+    def livraison(self, adresse):
+        print("Je livre la pizza à l'adresse", adresse)
 
-# base = input("Quelle base voulez-vous ? (tomate/blanche)")
-# taille = input ("Quelle taille voulez-vous ? (moyenne/grande)")
-# style = input("Quel style voulez-vous = (classique, calzone, stromboli)")
-# ingredients = input("Quels ingrédients voulez-vous ?")
+base = input("Quelle base voulez-vous ? (tomate/blanche)")
+taille = input ("Quelle taille voulez-vous ? (moyenne/grande)")
+style = input("Quel style voulez-vous = (classique, calzone, stromboli)")
+ingredients = input("Quels ingrédients voulez-vous ?")
 
-# diametre = 30
-# if taille == "grande":
-# diametre = 34
+diametre = 30
+if taille == "grande":
+    diametre = 34
 
-# ingredients = ingredients.split(", ")
+ingredients = ingredients.split(", ")
 
-# prix = 5 + len(ingredients)
+prix = 5 + len(ingredients)
 
-# pizza = Pizza(
-# base=base,
-# diametre=diametre,
-# style=style,
-# ingredients=ingredients,
-# prix=prix,
-# )
+pizza = Pizza(
+base=base,
+diametre=diametre,
+style=style,
+ingredients=ingredients,
+prix=prix,
+)
 
-# print(pizza.ingredients, pizza.prix)
-# pizza.ajouter_ingredients("olives")
-# print(pizza.ingredients, pizza.prix)
-# pizza.livraison("9 rue du bois")
-# pizza.servir(13)
-# ananas = input("Voulez-vous ajouter des ananas ? (oui,non) ")
+print(pizza.ingredients, pizza.prix)
+pizza.ajouter_ingredients("olives")
+print(pizza.ingredients, pizza.prix)
+pizza.livraison("9 rue du bois")
+pizza.servir(13)
+ananas = input("Voulez-vous ajouter des ananas ? (oui,non) ")
 
-# if ananas == "oui":
-# pizza.ajouter_ingredients ("ananas")
+if ananas == "oui":
+    pizza.ajouter_ingredients ("ananas") """
 
 # exercice 1 Ecrivez un script qui détermine si une chaîne contient ou non le caractère "e"
 
@@ -170,20 +171,72 @@
 # print("la lettre e n'est pas dans la chaîne")
 
 # coding: utf-8
-
-from tkinter import Button, Label, Tk
+"""
+from tkinter import Button, Label, Tk, Checkbutton, StringVar, Radiobutton
 
 fenetre = Tk()
 
 label = Label(fenetre, text="Hello World")
 label.pack()
 
-# label
+#label
 label = Label(fenetre, text="Voilà une fenêtre", bg="white")
 label.pack()
+
+label = Label(fenetre, text="Voilà une autre fenêtre en rouge", bg="red")
+label.pack()
+
+# checkbutton
+bouton = Checkbutton(fenetre, text="J'aime les chats")
+bouton.pack()
+
+
+
+# label
+label = Label(fenetre, text="Est-ce que j'aime vraiment les chats", bg="white")
+label.pack()
+
+# radiobutton
+value = StringVar()
+bouton1 = Radiobutton(fenetre, text="Oui", variable=value, value=1)
+bouton2 = Radiobutton(fenetre, text="Non", variable=value, value=2)
+bouton3 = Radiobutton(fenetre, text="Peu être", variable=value, value=3)
+bouton1.pack()
+bouton2.pack()
+bouton3.pack()
 
 # bouton de sortie
 bouton = Button(fenetre, text="Fermer", command=fenetre.quit)
 bouton.pack()
 
-fenetre.mainloop()
+fenetre.mainloop() """
+
+# chaine="abcdefghijklmnopqrstuvwxyz" * 10
+
+# i=1
+# while i <= len(chaine):
+# print(chaine[:i])
+# chaine=chaine[i:]
+# i+=1
+
+
+# chaine = "Bonjour je suis Héloïse"
+
+# i=1
+
+# while i<= len(chaine):
+# print(chaine[:i])
+# i+=1
+
+# def cesar(msg" , clef=0)
+# alphabet = "abcdefghijklmnopqrstuvwxyz"
+# chiffre = ""
+
+# for l in msg.lower():
+# pos = alphabet.find(l)
+
+# if pos != -1:
+# chiffre+=alphabet[(pos+clef) % len(alphabet)]
+# else:
+# chiffre+=1
+# return chiffre
