@@ -1,5 +1,10 @@
 # generate_html.py
 from datetime import datetime
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Sample data: Replace with your actual lists
 list1 = {"Rose", "Tulip", "Orchid", "Sunflower"}
@@ -43,6 +48,9 @@ html_content = f"""<!DOCTYPE html>
     </div>
 </body>
 </html>"""
+
+data_folder = os.getenv("DATA_PATH")
+print(data_folder)
 
 # Save to file
 with open("../data/home_page.html", "w", encoding="utf-8") as file:
