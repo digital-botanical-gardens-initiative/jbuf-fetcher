@@ -1,6 +1,6 @@
 # generate_html.py
-from datetime import datetime
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -49,11 +49,12 @@ html_content = f"""<!DOCTYPE html>
 </body>
 </html>"""
 
-data_folder = os.getenv("DATA_PATH")
-print(data_folder)
+data_folder = str(os.getenv("DATA_PATH"))
+
+html_file = os.path.join(data_folder, "home_page.html")
 
 # Save to file
-with open("../data/home_page.html", "w", encoding="utf-8") as file:
+with open(html_file, "w", encoding="utf-8") as file:
     file.write(html_content)
 
 print("HTML file generated: plants_comparison.html")
