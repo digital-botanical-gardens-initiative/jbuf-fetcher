@@ -31,59 +31,83 @@ html_content = f"""<!DOCTYPE html>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 40px; text-align: center; }}
         h1 {{ color: #2c3e50; }}
+        
+        /* List container styling */
         .list-container {{ display: flex; justify-content: space-around; }}
         .list {{ border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; }}
+        
+        /* Button container styling */
         .button-container {{
             display: flex;
-            justify-content: center;
-            gap: 5%;
+            justify-content: space-between;
+            gap: 2%;
             margin-top: 20px;
-            flex-wrap: wrap;  /* Allow buttons to wrap on small screens */
+            flex-wrap: nowrap;  /* Prevent wrapping */
         }}
+        
+        /* Styling for individual buttons */
         .btn {{
-            padding: 10px 20px;
-            font-size: 4vw;  /* Responsive font size based on viewport width */
+            flex: 1;  /* Make all buttons the same width */
+            padding: 10px 0;
+            font-size: 3vw;  /* Responsive font size for icon */
             background-color: #e6e600;
             color: white;
             border: none;
             border-radius: 40px;
             cursor: pointer;
             text-decoration: none;
-            display: inline-flex;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            transition: background-color 0.3s;
         }}
+        
         .btn:hover {{ background-color: #ffff33; }}
+        
+        /* Icon size */
         .btn img, .btn i {{
-            width: 3vw;  /* Responsive icon size based on viewport width */
-            height: 3vw;  /* Maintain square aspect ratio */
-            margin-right: 8px;
+            width: 12vw;  /* Large icon size relative to viewport width */
+            height: 12vw;  /* Maintain square aspect ratio */
+            margin-bottom: 5px;  /* Space between icon and text */
         }}
-
+        
+        /* Text size and styling */
+        .btn span {{
+            font-size: 2vw;  /* Smaller text size relative to viewport width */
+            text-transform: capitalize;
+        }}
+        
+        /* Media query for small screens (e.g., smartphones) */
         @media (max-width: 768px) {{
             .btn {{
-                font-size: 6vw;  /* Increase the font size for smaller screens */
-                padding: 8px 16px;
+                font-size: 6vw;  /* Increase font size for smaller screens */
+                padding: 8px 0;
             }}
             .btn img, .btn i {{
-                width: 6vw;  /* Increase icon size for smaller screens */
-                height: 6vw;
+                width: 20vw;  /* Increase icon size for smaller screens */
+                height: 20vw;
+            }}
+            .btn span {{
+                font-size: 3.5vw;  /* Increase text size on small screens */
             }}
         }}
-
     </style>
 </head>
 <body>
 
     <div class="button-container">
         <a href="https://emi-collection.unifr.ch/directus" class="btn" target="_blank">
-            <img src="images/directus.png" alt="Directus Icon" /> Directus
+            <img src="images/directus.png" alt="Directus Icon" />
+            <span>Directus</span>
         </a>
         <a href="https://emi-collection.unifr.ch/nextcloud" class="btn" target="_blank">
-            <img src="images/nextcloud.png" alt="NextCloud Icon" /> NextCloud
+            <img src="images/nextcloud.png" alt="NextCloud Icon" />
+            <span>NextCloud</span>
         </a>
         <a href="https://emi-collection.unifr.ch/qfieldcloud" class="btn" target="_blank">
-            <img src="images/qfieldcloud.png" alt="QFieldCloud Icon" /> QFieldCloud
+            <img src="images/qfieldcloud.png" alt="QFieldCloud Icon" />
+            <span>QFieldCloud</span>
         </a>
     </div>
 
