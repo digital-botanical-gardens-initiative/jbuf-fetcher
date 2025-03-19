@@ -26,16 +26,51 @@ html_content = f"""<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMI collection home page</title>
+    <title>Home</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {{ font-family: Arial, sans-serif; margin: 40px; text-align: center; }}
         h1 {{ color: #2c3e50; }}
         .list-container {{ display: flex; justify-content: space-around; }}
         .list {{ border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; }}
-        .button-container {{ display: flex; justify-content: center; gap: 20px; margin-top: 20px; }}
-        .btn {{ padding: 10px 20px; font-size: 25px; background-color: #cccc00; color: white; border: none; border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }}
-        .btn:hover {{ background-color: #ff9966; }}
-        .btn img {{ width: 100px; height: 100px; margin-right: 8px; }}
+        .button-container {{
+            display: flex;
+            justify-content: center;
+            gap: 5%;
+            margin-top: 20px;
+            flex-wrap: wrap;  /* Allow buttons to wrap on small screens */
+        }}
+        .btn {{
+            padding: 10px 20px;
+            font-size: 4vw;  /* Responsive font size based on viewport width */
+            background-color: #e6e600;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        .btn:hover {{ background-color: #ffff33; }}
+        .btn img, .btn i {{
+            width: 3vw;  /* Responsive icon size based on viewport width */
+            height: 3vw;  /* Maintain square aspect ratio */
+            margin-right: 8px;
+        }}
+
+        @media (max-width: 768px) {{
+            .btn {{
+                font-size: 6vw;  /* Increase the font size for smaller screens */
+                padding: 8px 16px;
+            }}
+            .btn img, .btn i {{
+                width: 6vw;  /* Increase icon size for smaller screens */
+                height: 6vw;
+            }}
+        }}
+
     </style>
 </head>
 <body>
