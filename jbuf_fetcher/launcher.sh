@@ -13,6 +13,9 @@ echo $env_path
 # Load the .env file
 source "${env_path}"
 
+mkdir -p "${DATA_PATH}"
+mkdir -p "${LOGS_PATH}"
+
 # Clean logs folder if the used space is greater than 100MB
 SIZE_LIMIT_MB=100
 
@@ -28,11 +31,6 @@ if [ "$FOLDER_SIZE_MB" -gt "$SIZE_LIMIT_MB" ]; then
 
     echo "Contents of the folder have been deleted."
 fi
-
-echo $DATA_PATH
-# Create folders
-mkdir -p "${DATA_PATH}"
-mkdir -p "${LOGS_PATH}"
 
 # Get scripts folder
 scripts_folder="${p}/jbuf_fetcher/"
@@ -56,5 +54,5 @@ run_script() {
 # Run fetcher_botavista
 #run_script "fetcher_botavista"
 
-# Run test
-#run_script "test"
+# Run web_page.py
+run_script "web_page"

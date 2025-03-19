@@ -31,11 +31,11 @@ html_content = f"""<!DOCTYPE html>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 40px; text-align: center; }}
         h1 {{ color: #2c3e50; }}
-        
+
         /* List container styling */
         .list-container {{ display: flex; justify-content: space-around; }}
         .list {{ border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; }}
-        
+
         /* Button container styling */
         .button-container {{
             display: flex;
@@ -44,7 +44,7 @@ html_content = f"""<!DOCTYPE html>
             margin-top: 20px;
             flex-wrap: nowrap;  /* Prevent wrapping */
         }}
-        
+
         /* Styling for individual buttons */
         .btn {{
             flex: 1;  /* Make all buttons the same width */
@@ -62,22 +62,22 @@ html_content = f"""<!DOCTYPE html>
             justify-content: center;
             transition: background-color 0.3s;
         }}
-        
+
         .btn:hover {{ background-color: #ffff33; }}
-        
+
         /* Icon size */
         .btn img, .btn i {{
             width: 12vw;  /* Large icon size relative to viewport width */
             height: 12vw;  /* Maintain square aspect ratio */
             margin-bottom: 5px;  /* Space between icon and text */
         }}
-        
+
         /* Text size and styling */
         .btn span {{
             font-size: 2vw;  /* Smaller text size relative to viewport width */
             text-transform: capitalize;
         }}
-        
+
         /* Media query for small screens (e.g., smartphones) */
         @media (max-width: 768px) {{
             .btn {{
