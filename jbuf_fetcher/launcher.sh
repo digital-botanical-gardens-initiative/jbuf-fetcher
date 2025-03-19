@@ -11,7 +11,6 @@ git pull origin main
 
 # .env path
 env_path="${p}/.env"
-echo $env_path
 
 # Load the .env file
 source "${env_path}"

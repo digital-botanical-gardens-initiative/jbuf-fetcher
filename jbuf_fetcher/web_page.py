@@ -111,7 +111,8 @@ html_content = f"""<!DOCTYPE html>
         </a>
     </div>
 
-    <h1>Collection status (updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</h1>
+    <h1>Collection status</h1>
+    <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
     <div class="list-container">
         <div class="list">
