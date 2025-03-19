@@ -114,6 +114,8 @@ html_content = f"""<!DOCTYPE html>
     <h1>Collection status</h1>
     <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
+    <progress id="progress-bar" value="50" max="100"></progress>
+
     <div class="list-container">
         <div class="list">
             <h2>Only in List 1</h2>
