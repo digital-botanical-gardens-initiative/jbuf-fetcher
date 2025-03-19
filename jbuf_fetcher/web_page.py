@@ -14,7 +14,8 @@ list2 = {"Tulip", "Orchid", "Lily", "Daisy"}
 only_in_list1 = list1 - list2
 only_in_list2 = list2 - list1
 
-percentage = 65
+percentage_fribourg = 65
+percentage_neuchatel = 35
 
 # Generate HTML
 html_content = f"""<!DOCTYPE html>
@@ -27,10 +28,11 @@ html_content = f"""<!DOCTYPE html>
     <style>
         body {{
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 20px;
             text-align: center;
         }}
         h1 {{
+            margin-top: 50px;
             color: #2c3e50;
         }}
 
@@ -91,16 +93,19 @@ html_content = f"""<!DOCTYPE html>
         }}
 
         /* Styling for the jbuf container */
-        .jbuf-container {{
+        .bg-container {{
             display: flex;  /* Use flexbox to align children horizontally */
             align-items: center;  /* Vertically align items in the center */
-            gap: 20px;  /* Add some space between the title and the progress bar */
+            justify-content: space-between;  /* Align h1 to the left and progress bar to the right */
+            width: 100%;
+            margin-botom: 50px;
         }}
 
         /* Optional: Make the title smaller or adjust its font size */
-        .jbuf-container h1 {{
+        .bg-container h1 {{
             font-size: 1.5em;  /* Adjust size of the title */
             margin: 0;  /* Remove any default margin */
+            width: 40%
         }}
 
         /* Progress bar styling */
@@ -151,6 +156,8 @@ html_content = f"""<!DOCTYPE html>
 </head>
 <body>
 
+    <h1>Access services</h1>
+
     <div class="button-container">
         <a href="https://emi-collection.unifr.ch/directus" class="btn" target="_blank">
             <img src="images/directus.png" alt="Directus Icon" />
@@ -169,9 +176,14 @@ html_content = f"""<!DOCTYPE html>
     <h1>Collection status</h1>
     <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
-    <div class="jbuf-container">
-        <h1>Jardin Botanique de l'Université de Fribourg ({percentage}%):</h1>
-        <progress id="progress-bar" value={percentage} max="100"></progress>
+    <div class="bg-container">
+        <h1>Jardin Botanique de l'Université de Fribourg ({percentage_fribourg}%):</h1>
+        <progress id="progress-bar" value={percentage_fribourg} max="100"></progress>
+    </div>
+
+    <div class="bg-container">
+        <h1>Jardin Botanique de Neuchâtel ({percentage_neuchatel}%):</h1>
+        <progress id="progress-bar" value={percentage_neuchatel} max="100"></progress>
     </div>
 
     <div class="list-container">
