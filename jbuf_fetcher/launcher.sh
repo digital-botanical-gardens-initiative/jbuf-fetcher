@@ -6,6 +6,9 @@ p=$(dirname $(dirname $(realpath $0)))
 # Go to repository
 cd $p
 
+# Update repository
+git pull origin main
+
 # .env path
 env_path="${p}/.env"
 echo $env_path
