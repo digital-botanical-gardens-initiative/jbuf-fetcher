@@ -14,6 +14,12 @@ list2 = {"Tulip", "Orchid", "Lily", "Daisy"}
 only_in_list1 = list1 - list2
 only_in_list2 = list2 - list1
 
+# Get script location
+script_location = os.path.abspath(__file__)
+
+# Get the parent directory of the script
+parent_directory = os.path.dirname(script_location)
+
 # Generate HTML
 html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -26,19 +32,27 @@ html_content = f"""<!DOCTYPE html>
         h1 {{ color: #2c3e50; }}
         .list-container {{ display: flex; justify-content: space-around; }}
         .list {{ border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; }}
-        .button-container {{ margin-top: 20px; }}
-        .btn {{ padding: 10px 20px; font-size: 16px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }}
-        .btn:hover {{ background-color: #2980b9; }}
+        .button-container {{ display: flex; justify-content: center; gap: 20px; margin-top: 20px; }}
+        .btn {{ padding: 10px 20px; font-size: 25px; background-color: #cccc00; color: white; border: none; border-radius: 30px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }}
+        .btn:hover {{ background-color: #ff9966; }}
+        .btn img {{ width: 100px; height: 100px; margin-right: 8px; }}
     </style>
 </head>
 <body>
-    <h1>Plant List Comparison</h1>
-    <p>Updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
 
-    <!-- Button to Redirect -->
     <div class="button-container">
-        <a href="http://your-url-here.com" class="btn" target="_blank">Go to Plant Info</a>
+        <a href="https://emi-collection.unifr.ch/directus" class="btn" target="_blank">
+            <img src="{parent_directory}/images/directus.png" alt="Directus Icon" /> Directus
+        </a>
+        <a href="https://emi-collection.unifr.ch/nextcloud" class="btn" target="_blank">
+            <img src="{parent_directory}/images/nextcloud.png" alt="NextCloud Icon" /> NextCloud
+        </a>
+        <a href="https://emi-collection.unifr.ch/qfieldcloud" class="btn" target="_blank">
+            <img src="{parent_directory}/images/qfieldcloud.png" alt="QFieldCloud Icon" /> QFieldCloud
+        </a>
     </div>
+
+    <h1>Collection status (updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</h1>
 
     <div class="list-container">
         <div class="list">
