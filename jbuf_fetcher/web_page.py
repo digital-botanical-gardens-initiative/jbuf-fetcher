@@ -42,13 +42,13 @@ html_content = f"""<!DOCTYPE html>
 
     <div class="button-container">
         <a href="https://emi-collection.unifr.ch/directus" class="btn" target="_blank">
-            <img src="{parent_directory}/images/directus.png" alt="Directus Icon" /> Directus
+            <img src="/var/www/images/directus.png" alt="Directus Icon" /> Directus
         </a>
         <a href="https://emi-collection.unifr.ch/nextcloud" class="btn" target="_blank">
-            <img src="{parent_directory}/images/nextcloud.png" alt="NextCloud Icon" /> NextCloud
+            <img src="/var/www/images/nextcloud.png" alt="NextCloud Icon" /> NextCloud
         </a>
         <a href="https://emi-collection.unifr.ch/qfieldcloud" class="btn" target="_blank">
-            <img src="{parent_directory}/images/qfieldcloud.png" alt="QFieldCloud Icon" /> QFieldCloud
+            <img src="/var/www/images/qfieldcloud.png" alt="QFieldCloud Icon" /> QFieldCloud
         </a>
     </div>
 
