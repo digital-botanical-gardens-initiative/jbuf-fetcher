@@ -14,11 +14,7 @@ list2 = {"Tulip", "Orchid", "Lily", "Daisy"}
 only_in_list1 = list1 - list2
 only_in_list2 = list2 - list1
 
-# Get script location
-script_location = os.path.abspath(__file__)
-
-# Get the parent directory of the script
-parent_directory = os.path.dirname(script_location)
+percentage = 65
 
 # Generate HTML
 html_content = f"""<!DOCTYPE html>
@@ -29,12 +25,26 @@ html_content = f"""<!DOCTYPE html>
     <title>Home</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        body {{ font-family: Arial, sans-serif; margin: 40px; text-align: center; }}
-        h1 {{ color: #2c3e50; }}
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            text-align: center;
+        }}
+        h1 {{
+            color: #2c3e50;
+        }}
 
         /* List container styling */
-        .list-container {{ display: flex; justify-content: space-around; }}
-        .list {{ border: 1px solid #ddd; padding: 20px; border-radius: 5px; background: #f9f9f9; }}
+        .list-container {{
+            display: flex;
+            justify-content: space-around;
+        }}
+        .list {{
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }}
 
         /* Button container styling */
         .button-container {{
@@ -42,14 +52,14 @@ html_content = f"""<!DOCTYPE html>
             justify-content: space-between;
             gap: 2%;
             margin-top: 20px;
-            flex-wrap: nowrap;  /* Prevent wrapping */
+            flex-wrap: nowrap;
         }}
 
         /* Styling for individual buttons */
         .btn {{
-            flex: 1;  /* Make all buttons the same width */
+            flex: 1;
             padding: 10px 0;
-            font-size: 3vw;  /* Responsive font size for icon */
+            font-size: 3vw;
             background-color: #e6e600;
             color: white;
             border: none;
@@ -63,33 +73,78 @@ html_content = f"""<!DOCTYPE html>
             transition: background-color 0.3s;
         }}
 
-        .btn:hover {{ background-color: #ffff33; }}
+        .btn:hover {{
+            background-color: #ffff33;
+        }}
 
         /* Icon size */
         .btn img, .btn i {{
-            width: 12vw;  /* Large icon size relative to viewport width */
-            height: 12vw;  /* Maintain square aspect ratio */
-            margin-bottom: 5px;  /* Space between icon and text */
+            width: 12vw;
+            height: 12vw;
+            margin-bottom: 5px;
         }}
 
         /* Text size and styling */
         .btn span {{
-            font-size: 2vw;  /* Smaller text size relative to viewport width */
+            font-size: 2vw;
             text-transform: capitalize;
         }}
 
-        /* Media query for small screens (e.g., smartphones) */
+        /* Styling for the jbuf container */
+        .jbuf-container {{
+            display: flex;  /* Use flexbox to align children horizontally */
+            align-items: center;  /* Vertically align items in the center */
+            gap: 20px;  /* Add some space between the title and the progress bar */
+        }}
+
+        /* Optional: Make the title smaller or adjust its font size */
+        .jbuf-container h1 {{
+            font-size: 1.5em;  /* Adjust size of the title */
+            margin: 0;  /* Remove any default margin */
+        }}
+
+        /* Progress bar styling */
+        #progress-bar {{
+            width: 60%;
+            height: 50px;
+            border-radius: 40px;
+            border: 5px solid #2c3e50;
+            margin: 20px auto;
+            background-color: #f2f2f2;
+        }}
+
+        #progress-bar::-webkit-progress-bar {{
+            border-radius: 40px;
+            background-color: #f2f2f2;
+        }}
+
+        #progress-bar::-webkit-progress-value {{
+            border-radius: 40px;
+            background: #00e64d
+        }}
+
+        /* Firefox */
+        #progress-bar::-moz-progress-bar {{
+            border-radius: 40px;
+            background: #00e64d
+        }}
+
+        /* Media query for small screens */
         @media (max-width: 768px) {{
             .btn {{
-                font-size: 6vw;  /* Increase font size for smaller screens */
+                font-size: 6vw;
                 padding: 8px 0;
             }}
             .btn img, .btn i {{
-                width: 20vw;  /* Increase icon size for smaller screens */
+                width: 20vw;
                 height: 20vw;
             }}
             .btn span {{
-                font-size: 3.5vw;  /* Increase text size on small screens */
+                font-size: 3.5vw;
+            }}
+            #progress-bar {{
+                width: 90%;
+                height: 25px;
             }}
         }}
     </style>
@@ -114,7 +169,10 @@ html_content = f"""<!DOCTYPE html>
     <h1>Collection status</h1>
     <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
-    <progress id="progress-bar" value="50" max="100"></progress>
+    <div class="jbuf-container">
+        <h1>Jardin Botanique de l'Université de Fribourg ({percentage}%):</h1>
+        <progress id="progress-bar" value={percentage} max="100"></progress>
+    </div>
 
     <div class="list-container">
         <div class="list">
