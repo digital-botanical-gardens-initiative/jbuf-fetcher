@@ -21,27 +21,26 @@ params = {"sort[]": f"-{field_name}"}
 response = session.get(request_url, params=params)
 
 if response.status_code == 200:
-    list_directus = response.json()["data"][0][field_name] if response.json()["data"] else "null"
+    #list_directus = response.json()["data"][0][field_name] if response.json()["data"] else "null"
+    data_list = response.json().get("data", [])
     # print(list_directus)
 
-    # Select useful columns 
-    columns_to_keep = ["taxon_name","sample_name"]
-
-    filtered_data = filtered_data = [
-        {key: entry[key] for key in columns_to_keep if key in entry}
-        for entry in list_directus
+    # Merge taxon_name and sample_name
+    filtered_data = [
+        {"sample_name": entry.get("sample_name") or entry.get("taxon_name", "")}
+        for entry in data_list
     ]
 
-    data_folder = os.getenv("DATA_PATH")
+    # Path file
+    data_folder = os.getenv("DATA_PATH" , ".")
+    os.makedirs(data_folder, exist_ok=True) 
     data_file = os.path.join(data_folder, "directus_data.json")
-    print(data_file)
 
-    list_directus = response.json().get("data", [])
-
-
-    # Sauve data
+    # Save filtered data 
     with open(data_file, "w", encoding="utf-8") as f:
-        json.dump(list_directus, f, indent=4)
+        json.dump(filtered_data, f, indent=4)
+    
+
 
     print(f"Data have been succesfully saved in {data_file}")
 
