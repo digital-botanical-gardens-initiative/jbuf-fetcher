@@ -175,6 +175,7 @@ html_content = f"""<!DOCTYPE html>
 
     <h1>Collection status</h1>
     <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
+    <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
     <div class="bg-container">
         <h1>Jardin Botanique de l'Université de Fribourg ({percentage_fribourg}%):</h1>
