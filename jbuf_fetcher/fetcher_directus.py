@@ -1,8 +1,8 @@
 import json
 import os
 
-from dotenv import load_dotenv
 import requests
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -21,7 +21,7 @@ params = {"sort[]": f"-{field_name}"}
 response = session.get(request_url, params=params)
 
 if response.status_code == 200:
-    #list_directus = response.json()["data"][0][field_name] if response.json()["data"] else "null"
+    # list_directus = response.json()["data"][0][field_name] if response.json()["data"] else "null"
     data_list = response.json().get("data", [])
     # print(list_directus)
 
@@ -37,7 +37,7 @@ if response.status_code == 200:
             if name_proposition:
                 sample_name = name_proposition
             else:
-                continue # ignore the line
+                continue  # ignore the line
 
         # Merge taxon_name with sample_name
         if not sample_name:
@@ -52,15 +52,13 @@ if response.status_code == 200:
             filtered_data.append({"sample_name": sample_name})
 
     # Path file
-    data_folder = os.getenv("DATA_PATH" , ".")
-    os.makedirs(data_folder, exist_ok=True) 
+    data_folder = os.getenv("DATA_PATH", ".")
+    os.makedirs(data_folder, exist_ok=True)
     data_file = os.path.join(data_folder, "directus_data.json")
 
-    # Save filtered data 
+    # Save filtered data
     with open(data_file, "w", encoding="utf-8") as f:
         json.dump(filtered_data, f, indent=4)
-    
-
 
     print(f"Data have been succesfully saved in {data_file}")
 
