@@ -1,7 +1,10 @@
 import json
 import os
 
+from dotenv import load_dotenv
 import requests
+
+load_dotenv()
 
 # Define the Directus URLs
 field_name = "qfield_project"
@@ -21,11 +24,20 @@ if response.status_code == 200:
     list_directus = response.json()["data"][0][field_name] if response.json()["data"] else "null"
     # print(list_directus)
 
-    data_folder = "../data"
+    # Select useful columns 
+    columns_to_keep = ["taxon_name","sample_name"]
+
+    filtered_data = filtered_data = [
+        {key: entry[key] for key in columns_to_keep if key in entry}
+        for entry in list
+    ]
+
+    data_folder = os.getenv("DATA_PATH")
     data_file = os.path.join(data_folder, "directus_data.json")
     print(data_file)
 
     list_directus = response.json().get("data", [])
+
 
     # Sauve data
     with open(data_file, "w", encoding="utf-8") as f:
