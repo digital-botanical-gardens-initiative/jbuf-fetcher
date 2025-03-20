@@ -11,7 +11,10 @@ field_name = "qfield_project"
 base_url = "https://emi-collection.unifr.ch/directus"
 project = "jbuf"
 collection_url = base_url + "/items/Field_Data"
-request_url = collection_url + f"?filter[{field_name}][_eq]={project}&&limit=-1"
+request_url = (
+    collection_url
+    + f"?filter[{field_name}][_eq]={project}&&limit=-1&fields=sample_id,sample_name,taxon_name,name_proposition"
+)
 
 # Define session
 session = requests.Session()
@@ -23,11 +26,14 @@ response = session.get(request_url, params=params)
 if response.status_code == 200:
     # list_directus = response.json()["data"][0][field_name] if response.json()["data"] else "null"
     data_list = response.json().get("data", [])
-    # print(list_directus)
+
+    # Dictionary for unique sample name
+    unique_samples: dict[str, dict[str, str]] = {}
 
     # Merge taxon_name and sample_name
     filtered_data = []
     for entry in data_list:
+        sample_id = entry.get("sample_id")
         sample_name = (entry.get("sample_name") or "").strip()
         taxon_name = (entry.get("taxon_name") or "").strip()
         name_proposition = (entry.get("name_proposition") or "").strip()
@@ -49,7 +55,7 @@ if response.status_code == 200:
 
         # Do not get the line if there is no sample_name
         if sample_name:
-            filtered_data.append({"sample_name": sample_name})
+            filtered_data.append({"sample_name": sample_name, "sample_id": sample_id})
 
     # Path file
     data_folder = os.getenv("DATA_PATH", ".")
