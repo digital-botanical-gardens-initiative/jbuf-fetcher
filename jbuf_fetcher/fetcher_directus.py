@@ -29,7 +29,7 @@ if response.status_code == 200:
 
     filtered_data = filtered_data = [
         {key: entry[key] for key in columns_to_keep if key in entry}
-        for entry in list
+        for entry in list_directus
     ]
 
     data_folder = os.getenv("DATA_PATH")
