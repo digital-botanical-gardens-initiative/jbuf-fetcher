@@ -26,10 +26,30 @@ if response.status_code == 200:
     # print(list_directus)
 
     # Merge taxon_name and sample_name
-    filtered_data = [
-        {"sample_name": entry.get("sample_name") or entry.get("taxon_name", "")}
-        for entry in data_list
-    ]
+    filtered_data = []
+    for entry in data_list:
+        sample_name = (entry.get("sample_name") or "").strip()
+        taxon_name = (entry.get("taxon_name") or "").strip()
+        name_proposition = (entry.get("name_proposition") or "").strip()
+
+        # Replace "aaunknown" (no name on the list)
+        if sample_name.lower() == "aaunknown":
+            if name_proposition:
+                sample_name = name_proposition
+            else:
+                continue # ignore the line
+
+        # Merge taxon_name with sample_name
+        if not sample_name:
+            sample_name = taxon_name
+
+        # If no taxon_name and no sample_name take name_proposition
+        if not sample_name:
+            sample_name = name_proposition
+
+        # Do not get the line if there is no sample_name
+        if sample_name:
+            filtered_data.append({"sample_name": sample_name})
 
     # Path file
     data_folder = os.getenv("DATA_PATH" , ".")
