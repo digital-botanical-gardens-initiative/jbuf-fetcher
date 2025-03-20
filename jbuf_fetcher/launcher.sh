@@ -58,3 +58,6 @@ run_script() {
 
 # Run web_page.py
 run_script "web_page"
+
+# Transfer the html file to the server
+eval "$RSYNC_COMMAND"
