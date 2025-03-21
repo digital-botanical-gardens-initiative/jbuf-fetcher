@@ -333,4 +333,4 @@ html_file = os.path.join(data_folder, "home_page.html")
 with open(html_file, "w", encoding="utf-8") as file:
     file.write(html_content)
 
-print("HTML file generated: plants_comparison.html")
+print("HTML file successfully generated")

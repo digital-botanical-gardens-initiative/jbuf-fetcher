@@ -42,7 +42,7 @@ run_script() {
     script_name=$1
     # Redirect all output to the log file
     exec &>> "$LOGS_PATH/$script_name.log"
-    echo "Running $script_name"
+    echo "Running $script_name $(date)"
     $POETRY_PATH run python3 "${scripts_folder}${script_name}.py"
     if [ $? -ne 0 ]; then
         echo "$script_name failed"
@@ -59,14 +59,12 @@ echo "$MINUTE $HOUR $DAY"
 
 # Run fetcher_directus and taxo_resolver every 2 hours at 30
 if [[ "$MINUTE" == "30" && $((HOUR % 2)) -eq 0 ]]; then
-    echo $(date)
     run_script "fetcher_directus"
     run_script "taxo_resolver"
 fi
 
 # Run fetcher_botavista every first day of month
 #if [[ "$DAY" == "01" && "$HOUR" == "00" && "$MINUTE" == "00" ]]; then
-    echo $(date)
     #run_script "fetcher_botavista"
 #fi
 
