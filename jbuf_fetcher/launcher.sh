@@ -50,11 +50,25 @@ run_script() {
     fi
 }
 
-# Run fetcher_directus
-run_script "fetcher_directus"
+# Get current minute, hour, and day
+MINUTE=$(date +\%M)
+HOUR=$(date +\%H)
+DAY=$(date +\%d)
 
-# Run fetcher_botavista
-#run_script "fetcher_botavista"
+echo "$MINUTE $HOUR $DAY"
+
+# Run fetcher_directus and taxo_resolver every 2 hours at 30
+if [[ "$MINUTE" == "30" && $((HOUR % 2)) -eq 0 ]]; then
+    echo $(date)
+    run_script "fetcher_directus"
+    run_script "taxo_resolver"
+fi
+
+# Run fetcher_botavista every first day of month
+#if [[ "$DAY" == "01" && "$HOUR" == "00" && "$MINUTE" == "00" ]]; then
+    echo $(date)
+    #run_script "fetcher_botavista"
+#fi
 
 # Run web_page.py
 run_script "web_page"
