@@ -1,10 +1,19 @@
 # generate_html.py
+import json
 import os
 from datetime import datetime
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Get the json list
+data_path = os.getenv("DATA_PATH")
+if not data_path:
+    print("Error : no DATA_PATH")
+    exit(1)
+
+json_path = os.path.join(data_path, "directus_data.json")
 
 # Sample data: Replace with your actual lists
 list1 = {"Rose", "Tulip", "Orchid", "Sunflower", "Bellis", "Muguet"}
@@ -14,15 +23,35 @@ list2 = {"Tulip", "Orchid", "Lily", "Daisy", "Jonquille"}
 only_in_list1 = list1 - list2
 only_in_list2 = list2 - list1
 
+# Collection variables
 percentage_collect_fribourg = 65
 percentage_collect_neuchatel = 35
 percentage_extraction_fribourg = 50
 percentage_extraction_neuchatel = 20
 
-# Variables for stack bar
-profiled = 20
-extracted = 20
-collected = 50
+# Variables for multiple progress bar
+profiled_fr = 25
+extracted_fr = 40
+collected_fr = 60
+profiled_ne = 20
+extracted_ne = 20
+collected_ne = 50
+
+# Generate the list
+with open(json_path, encoding="utf-8") as f:
+    data = json.load(f)
+
+sample_list_html = "<table>\n<tr>\n"
+
+for i, item in enumerate(data):
+    if "sample_name" in item:
+        sample_list_html += f"    <td>{item['sample_name']}</td>\n"
+
+        # Ajouter une nouvelle ligne toutes les 4 entrées
+        if (i + 1) % 4 == 0:
+            sample_list_html += "</tr>\n<tr>\n"
+
+sample_list_html += "</tr>\n</table>\n"
 
 # Generate HTML
 html_content = f"""<!DOCTYPE html>
@@ -159,6 +188,22 @@ html_content = f"""<!DOCTYPE html>
                 height: 25px;
             }}
         }}
+        table {{
+            width: 90% !important;
+            margin: auto;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }}
+        td {{
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            width: 25%; /* Width of each column */
+            word-wrap: break-word;
+            overflow-wrap: break-word; /* Cut words properly */
+            white-space: normal;
+        }}
     </style>
 </head>
 <body>
@@ -192,23 +237,62 @@ html_content = f"""<!DOCTYPE html>
         <h1>Jardin Botanique de Neuchâtel ({percentage_collect_neuchatel}%):</h1>
         <progress id="progress-bar" value={percentage_collect_neuchatel} max="100"></progress>
     </div>
+</head>
+<body>
 
+  <div class="container">
+    <h2>Jardin Botanique de l'Université de Fribourg</h2>
+    <p>Status of our samples</p>
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width:{collected_fr}%">Collected
+        </div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width:{extracted_fr}%">Extracted
+        </div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{profiled_fr}%">Profiled
+        </div>
+      </div>
 
-    <div class="container">
-  <h2>Status</h2>
-  <p>Status of our samples</p>
-  <div class="progress">
-    <div class="progress-bar progress-bar-success" role="progressbar" style="width:{profiled}%">
-      Profiled
-    </div>
-    <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{extracted}%">
-      Extracted
-    </div>
-    <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{collected}%">
-      Collected
-    </div>
-  </div>
-</div>
+  <div class="container">
+    <h2>Jardin Botanique de l'Université de Neuchatel</h2>
+    <p>Status of the samples</p>
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width:{collected_ne}%">Collected
+        </div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width:{extracted_ne}%">Extracted
+        </div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{profiled_ne}%">Profiled
+        </div>
+      </div>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Samples</title>
+    <style>
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+        }}
+        td {{
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            width: 25%;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Liste des Samples</h1>
+    {sample_list_html}
+</body>
 
 <head>
 
@@ -220,26 +304,6 @@ html_content = f"""<!DOCTYPE html>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
 
-</head>
-<body>
-
-</head>
-<body>
-
-  <div class="container">
-    <h2>My Satus of our samples</h2>
-      <div class="progress">
-        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width:{collected}%">Collected
-        </div>
-      </div>
-      <div class="progress">
-        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width:{extracted}%">Extracted
-        </div>
-      </div>
-      <div class="progress">
-        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{profiled}%">Profiled
-        </div>
-      </div>
 
 </body>
 
@@ -258,17 +322,6 @@ html_content = f"""<!DOCTYPE html>
         </div>
     </div>
 </body>
-
-<head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
-
 
 </html>"""
 
