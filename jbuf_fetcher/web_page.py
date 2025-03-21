@@ -14,8 +14,10 @@ list2 = {"Tulip", "Orchid", "Lily", "Daisy"}
 only_in_list1 = list1 - list2
 only_in_list2 = list2 - list1
 
-percentage_fribourg = 65
-percentage_neuchatel = 35
+percentage_collect_fribourg = 65
+percentage_collect_neuchatel = 35
+percentage_extraction_fribourg = 50
+percentage_extraction_neuchatel = 20
 
 # Generate HTML
 html_content = f"""<!DOCTYPE html>
@@ -178,13 +180,26 @@ html_content = f"""<!DOCTYPE html>
     <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
     <div class="bg-container">
-        <h1>Jardin Botanique de l'Université de Fribourg ({percentage_fribourg}%):</h1>
-        <progress id="progress-bar" value={percentage_fribourg} max="100"></progress>
+        <h1>Jardin Botanique de l'Université de Fribourg ({percentage_collect_fribourg}%):</h1>
+        <progress id="progress-bar" value={percentage_collect_fribourg} max="100"></progress>
     </div>
 
     <div class="bg-container">
-        <h1>Jardin Botanique de Neuchâtel ({percentage_neuchatel}%):</h1>
-        <progress id="progress-bar" value={percentage_neuchatel} max="100"></progress>
+        <h1>Jardin Botanique de Neuchâtel ({percentage_collect_neuchatel}%):</h1>
+        <progress id="progress-bar" value={percentage_collect_neuchatel} max="100"></progress>
+    </div>
+
+    <h1>Extraction status</h1>
+    <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
+
+    <div class="bg-container">
+        <h1>Jardin Botanique de l'Université de Fribourg ({percentage_extraction_fribourg}%):</h1>
+        <progress id="progress-bar" value={percentage_extraction_fribourg} max="100"></progress>
+    </div>
+
+    <div class="bg-container">
+        <h1>Jardin Botanique de Neuchâtel ({percentage_extraction_neuchatel}%):</h1>
+        <progress id="progress-bar" value={percentage_extraction_neuchatel} max="100"></progress>
     </div>
 
     <div class="list-container">

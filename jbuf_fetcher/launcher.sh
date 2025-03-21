@@ -51,7 +51,7 @@ run_script() {
 }
 
 # Run fetcher_directus
-#run_script "fetcher_directus"
+run_script "fetcher_directus"
 
 # Run fetcher_botavista
 #run_script "fetcher_botavista"
