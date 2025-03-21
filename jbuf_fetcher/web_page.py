@@ -8,12 +8,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get the json list
-data_path = os.getenv("DATA_PATH")
-if not data_path:
+data_sample_list_path = os.getenv("DATA_PATH")
+if not data_sample_list_path:
     print("Error : no DATA_PATH")
     exit(1)
 
-json_path = os.path.join(data_path, "directus_data.json")
+json_path = os.path.join(data_sample_list_path, "directus_data.json")
+
+not_resolved_data_path = os.getenv("DATA_PATH")
+if not not_resolved_data_path:
+    print("Error : no DATA_PATH")
+    exit(1)
+
+json_path = os.path.join(not_resolved_data_path, "not_resolved_data.json")
 
 # Sample data: Replace with your actual lists
 list1 = {"Rose", "Tulip", "Orchid", "Sunflower", "Bellis", "Muguet"}
@@ -53,15 +60,19 @@ for i, item in enumerate(data):
 
 sample_list_html += "</tr>\n</table>\n"
 
+not_resolved_data_html = "<ul>\n"
+for item in data:
+    not_resolved_data_html += "    <li>\n"
+    for key, value in item.items():
+        not_resolved_data_html += f"        <strong>{key}:</strong> {value}<br>\n"
+    not_resolved_data_html += "    </li>\n"
+not_resolved_data_html += "</ul>\n"
+    
+
 # Generate HTML
-html_content = f"""<!DOCTYPE html>
+html_style = f"""<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
+ <style>
         body {{
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -205,6 +216,17 @@ html_content = f"""<!DOCTYPE html>
             white-space: normal;
         }}
     </style>
+    """
+
+html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    {html_style} 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+   
 </head>
 <body>
 
@@ -274,6 +296,15 @@ html_content = f"""<!DOCTYPE html>
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not resolved data</title>
+</head>
+<body>
+    <h1>Not resolve data</h1>
+    {not_resolved_data_html}
+
+<head>
+    <meta charset="UTF-8">s
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Samples</title>
     <style>
