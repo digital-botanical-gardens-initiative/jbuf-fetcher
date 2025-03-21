@@ -1,8 +1,8 @@
 import os
 
 import pandas as pd
-from dotenv import load_dotenv
 import requests
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -41,7 +41,7 @@ fail_counter = 0
 
 for index, row in df.iterrows():
     name = str(row["sample_name"]).capitalize()
-    if name == "aaunknown" or name == "None" or name == "Aaunknown": # TODO: Once Heloïse has a clean json, remove this
+    if name == "aaunknown" or name == "None" or name == "Aaunknown":  # TODO: Once Heloïse has a clean json, remove this
         continue
 
     payload = {
@@ -56,24 +56,20 @@ for index, row in df.iterrows():
         "language": "eng",
         "wordsAround": 0,
         "verification": True,
-        "sources": [
-            1,
-            12,
-            169
-        ],
-        "allMatches": False
+        "sources": [1, 12, 169],
+        "allMatches": False,
     }
     response = session.post(url, json=payload)
     if response.status_code == 200:
-        if (response.json()["names"] != [] and response.json()["names"] != None):
+        if response.json()["names"] != [] and response.json()["names"] != None:
             matched_name = response.json()["names"][0]["verification"]["bestResult"]["currentCanonicalSimple"]
             if matched_name == "":
                 matched_name = response.json()["names"][0]["verification"]["bestResult"]["matchedCanonicalSimple"]
                 if matched_name == "":
                     print("Resolved but no match")
                     print(response.json()["names"][0])
-            #print(f"raw name: {name}")
-            #print(f"resolved name: {matched_name}")
+            # print(f"raw name: {name}")
+            # print(f"resolved name: {matched_name}")
         else:
             payload = {
                 "text": name,
@@ -87,19 +83,17 @@ for index, row in df.iterrows():
                 "language": "eng",
                 "wordsAround": 0,
                 "verification": False,
-                "sources": [
-                    1,
-                    12,
-                    169
-                ],
-                "allMatches": False
+                "sources": [1, 12, 169],
+                "allMatches": False,
             }
             response = session.post(url, json=payload)
             if response.status_code == 200:
-                if (response.json()["names"] != [] and response.json()["names"] != None):
+                if response.json()["names"] != [] and response.json()["names"] != None:
                     matched_name = response.json()["names"][0]["verification"]["bestResult"]["currentCanonicalSimple"]
                     if matched_name == "":
-                        matched_name = response.json()["names"][0]["verification"]["bestResult"]["matchedCanonicalSimple"]
+                        matched_name = response.json()["names"][0]["verification"]["bestResult"][
+                            "matchedCanonicalSimple"
+                        ]
                         if matched_name == "":
                             print("Resolved but no match")
                             print(response.json()["names"][0])
