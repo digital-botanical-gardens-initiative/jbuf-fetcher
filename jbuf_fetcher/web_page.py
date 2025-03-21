@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Sample data: Replace with your actual lists
-list1 = {"Rose", "Tulip", "Orchid", "Sunflower"}
-list2 = {"Tulip", "Orchid", "Lily", "Daisy"}
+list1 = {"Rose", "Tulip", "Orchid", "Sunflower", "Bellis", "Muguet"}
+list2 = {"Tulip", "Orchid", "Lily", "Daisy", "Jonquille"}
 
 # Find unique plants
 only_in_list1 = list1 - list2
@@ -18,6 +18,11 @@ percentage_collect_fribourg = 65
 percentage_collect_neuchatel = 35
 percentage_extraction_fribourg = 50
 percentage_extraction_neuchatel = 20
+
+# Variables for stack bar
+profiled = 20
+extracted = 20
+collected = 50
 
 # Generate HTML
 html_content = f"""<!DOCTYPE html>
@@ -177,7 +182,6 @@ html_content = f"""<!DOCTYPE html>
 
     <h1>Collection status</h1>
     <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
-    <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
     <div class="bg-container">
         <h1>Jardin Botanique de l'Université de Fribourg ({percentage_collect_fribourg}%):</h1>
@@ -189,18 +193,55 @@ html_content = f"""<!DOCTYPE html>
         <progress id="progress-bar" value={percentage_collect_neuchatel} max="100"></progress>
     </div>
 
-    <h1>Extraction status</h1>
-    <p>(updated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})</p>
 
-    <div class="bg-container">
-        <h1>Jardin Botanique de l'Université de Fribourg ({percentage_extraction_fribourg}%):</h1>
-        <progress id="progress-bar" value={percentage_extraction_fribourg} max="100"></progress>
+    <div class="container">
+  <h2>Status</h2>
+  <p>Status of our samples</p>
+  <div class="progress">
+    <div class="progress-bar progress-bar-success" role="progressbar" style="width:{profiled}%">
+      Profiled
     </div>
+    <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{extracted}%">
+      Extracted
+    </div>
+    <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{collected}%">
+      Collected
+    </div>
+  </div>
+</div>
 
-    <div class="bg-container">
-        <h1>Jardin Botanique de Neuchâtel ({percentage_extraction_neuchatel}%):</h1>
-        <progress id="progress-bar" value={percentage_extraction_neuchatel} max="100"></progress>
-    </div>
+<head>
+
+  <title>Bootstrap Progress Bars</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
+
+</head>
+<body>
+
+</head>
+<body>
+
+  <div class="container">
+    <h2>My Satus of our samples</h2>
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width:{collected}%">Collected
+        </div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width:{extracted}%">Extracted
+        </div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{profiled}%">Profiled
+        </div>
+      </div>
+
+</body>
 
     <div class="list-container">
         <div class="list">
@@ -217,6 +258,18 @@ html_content = f"""<!DOCTYPE html>
         </div>
     </div>
 </body>
+
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
 </html>"""
 
 data_folder = str(os.getenv("DATA_PATH"))
