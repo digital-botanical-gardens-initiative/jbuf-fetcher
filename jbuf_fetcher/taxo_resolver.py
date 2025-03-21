@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-json_path = os.path.join(os.getenv("DATA_PATH"), "directus_data.json")
+data_path = str(os.getenv("DATA_PATH"))
+
+json_path = os.path.join(data_path, "directus_data.json")
 
 df = pd.read_json(json_path)
 
@@ -39,7 +41,7 @@ url = "https://finder.globalnames.org/api/v1/find"
 
 fail_counter = 0
 
-for index, row in df.iterrows():
+for _index, row in df.iterrows():
     name = str(row["sample_name"]).capitalize()
     if name == "aaunknown" or name == "None" or name == "Aaunknown":  # TODO: Once Heloïse has a clean json, remove this
         continue
@@ -61,7 +63,7 @@ for index, row in df.iterrows():
     }
     response = session.post(url, json=payload)
     if response.status_code == 200:
-        if response.json()["names"] != [] and response.json()["names"] != None:
+        if response.json()["names"] != [] and response.json()["names"] is not None:
             matched_name = response.json()["names"][0]["verification"]["bestResult"]["currentCanonicalSimple"]
             if matched_name == "":
                 matched_name = response.json()["names"][0]["verification"]["bestResult"]["matchedCanonicalSimple"]
@@ -88,7 +90,7 @@ for index, row in df.iterrows():
             }
             response = session.post(url, json=payload)
             if response.status_code == 200:
-                if response.json()["names"] != [] and response.json()["names"] != None:
+                if response.json()["names"] != [] and response.json()["names"] is not None:
                     matched_name = response.json()["names"][0]["verification"]["bestResult"]["currentCanonicalSimple"]
                     if matched_name == "":
                         matched_name = response.json()["names"][0]["verification"]["bestResult"][
