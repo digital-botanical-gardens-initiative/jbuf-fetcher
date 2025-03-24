@@ -94,7 +94,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
         with tag("h1"):
             text("Collection status")
         with tag("p"):
-            text(f"(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})")
+            text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
     # Get collection data
     # resolved_data = os.path.join(data_path, "resolved_data.json")
