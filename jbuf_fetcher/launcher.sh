@@ -69,7 +69,7 @@ fi
 #fi
 
 # Run web_page.py
-run_script "web_page"
+run_script "tests_html"
 
 # Transfer the html file to the server
 eval "$RSYNC_COMMAND"
