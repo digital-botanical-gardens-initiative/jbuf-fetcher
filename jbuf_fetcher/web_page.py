@@ -244,8 +244,6 @@ html_content_fr = f"""<!DOCTYPE html>
 
 </head>
 <body>
-
-
 <head>
 
   <title>Bootstrap Progress Bars</title>
@@ -255,7 +253,6 @@ html_content_fr = f"""<!DOCTYPE html>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
-
 
 
   <div class="container">
@@ -275,19 +272,18 @@ html_content_fr = f"""<!DOCTYPE html>
       </div>
 
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Not resolved data</title>
-    <h1>Not resolve data </h1>
-    {html_style}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Not resolved data</title>
+  {html_style}
 <head>
-<body>
-    <h1>Not resolved data</h1>
-    <div class="list-container">
-        {not_resolved_data_html}
-    </div>
+  <h1>Not resolved data</h1>
+  <div class="list-container">
+    {not_resolved_data_html}
+  </div>
 </body>
     """
+
 
 html_content_ne = f"""<!DOCTYPE html>
 <html lang="en">
