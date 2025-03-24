@@ -70,7 +70,7 @@ fi
     #run_script "fetcher_botavista"
 #fi
 
-# Run web_page.py
+# Update html
 run_script "html_generator"
 
 # Transfer the html file to the server
