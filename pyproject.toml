@@ -30,6 +30,8 @@ pyspark = "^3.5.5"
 snowflake-connector-python = "^3.14.0"
 types-requests = "^2.32.0.20250306"
 pandas-stubs = "^2.2.3.250308"
+setuptools = "^78.0.1"
+wheel = "^0.45.1"
 
 
 
