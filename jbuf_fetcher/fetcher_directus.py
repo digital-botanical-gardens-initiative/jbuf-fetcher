@@ -9,22 +9,22 @@ load_dotenv()
 project_dict_str = os.getenv("PROJECT")
 
 if not project_dict_str:
-    print("Erreur : la variable PROJECT n'est pas définie dans .env")
+    print("Error : variable PROJECT not specified in .env")
     exit()
 
 try:
     # Convert JSON to python dictionary
     project_dict = json.loads(project_dict_str)
 except json.JSONDecodeError:
-    print("Erreur : la variable PROJECT dans .env n'est pas un JSON valide")
+    print("Error: PROJECT variable in .env is not a valid JSON")
     exit()
 
 # Extract only the key (project name)
-project_names = list(project_dict.keys())  # Ex: ["jbuf", "autre_projet"]
+project_names = list(project_dict.keys())
 
 # Check if there are some projects
 if not project_names:
-    print("Aucun projet trouvé dans .env")
+    print("No project found in .env")
     exit()
 
 
