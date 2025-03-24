@@ -29,7 +29,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; text-align: center; }
 
             /* Centered container */
-            .container { width: 100%; margin: 20px auto; padding: 20px; border-radius: 10px; background: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+            .container { width: 100%; margin: 20px auto; padding: 20px; border-radius: 10px; background: #c5cfbf; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
 
             /* Button Container */
             .button-container {
@@ -43,7 +43,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                 flex: 1;
                 padding: 10px 0;
                 font-size: 3vw;
-                background-color: #e6e600;
+                background-color: #5c7444;
                 color: white;
                 border: 40px;
                 border-radius: 40px;
@@ -55,7 +55,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                 justify-content: center;
                 transition: background-color 0.3s;
             }
-            .button:hover { background: #ffff66; }
+            .button:hover { background: #94a58c; }
 
             /* Icon Styling */
             .button img, .button i {
