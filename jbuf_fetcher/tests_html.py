@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 from yattag import Doc
@@ -76,29 +77,36 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             }
             """)
 
+    # Button container
     with tag("body"), tag("div", klass="container"):
         with tag("h1"):
             text("Services")
 
-        # Button container
         with tag("div", klass="button-container"):
             for button_name, attributes in buttons.items():
                 with tag("a", klass="button", href=attributes["url"]):
-                    with tag("img", src=attributes["icon"]):  # Add icon
+                    with tag("img", src=attributes["icon"]):
                         pass
-                    text(button_name)  # Button text
+                    text(button_name)
 
-    # Get data
+    # Status container
+    with tag("body"), tag("div", klass="container"):
+        with tag("h1"):
+            text("Collection status")
+        with tag("p"):
+            text(f"(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})")
+
+    # Get collection data
     # resolved_data = os.path.join(data_path, "resolved_data.json")
     # not_resolved_data = os.path.join(data_path, "not_resolved_data.json")
+
+    # Get projects
     projects = json.loads(str(os.getenv("PROJECT")))
 
+    # Create containers for projects
     for i in projects:
         with tag("body"), tag("div", klass="container"), tag("h1"):
-            text(i)
-
-        # List
-        # with tag("div", klass="list"):
+            text(i.upper())
 
     return doc.getvalue()
 
