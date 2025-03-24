@@ -1,3 +1,4 @@
+import json
 import os
 
 from dotenv import load_dotenv
@@ -6,7 +7,7 @@ from yattag import Doc
 load_dotenv()
 
 
-def generate_homepage(buttons: dict) -> str:
+def generate_homepage(buttons: dict, data_path: str) -> str:
     doc, tag, text = Doc().tagtext()
 
     with tag("html"), tag("head"), tag("title"):
@@ -61,6 +62,14 @@ def generate_homepage(buttons: dict) -> str:
                 height: 5vw;
             }
 
+            .list {
+                border: 1px solid #ddd;
+                padding: 20px;
+                border-radius: 5px;
+                background: #f9f9f9;
+                text-align: left;
+            }
+
             /* Responsive Design */
             @media (max-width: 1000px) {
                 .button { width: 100%; justify-content: center; }
@@ -74,11 +83,22 @@ def generate_homepage(buttons: dict) -> str:
         # Button container
         with tag("div", klass="button-container"):
             for button_name, attributes in buttons.items():
-                print(f"name: {button_name}, attributes; {attributes}")
                 with tag("a", klass="button", href=attributes["url"]):
                     with tag("img", src=attributes["icon"]):  # Add icon
                         pass
                     text(button_name)  # Button text
+
+    # Get data
+    # resolved_data = os.path.join(data_path, "resolved_data.json")
+    # not_resolved_data = os.path.join(data_path, "not_resolved_data.json")
+    projects = json.loads(str(os.getenv("PROJECT")))
+
+    for i in projects:
+        with tag("body"), tag("div", klass="container"), tag("h1"):
+            text(i)
+
+        # List
+        # with tag("div", klass="list"):
 
     return doc.getvalue()
 
@@ -98,15 +118,11 @@ if not data_path:
     print("Error : no DATA_PATH")
     exit(1)
 
-# Get data
-resolved_data = os.path.join(data_path, "resolved_data.json")
-not_resolved_data = os.path.join(data_path, "not_resolved_data.json")
-
 # Create html path
 html_file = os.path.join(data_path, "home_page.html")
 
 # Generate HTML and save to file
-html_content = generate_homepage(buttons)
+html_content = generate_homepage(buttons, data_path)
 with open(html_file, "w") as file:
     file.write(html_content)
 
