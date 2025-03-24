@@ -28,19 +28,39 @@ def generate_homepage(buttons):
                         .container { width: 100%; margin: 20px auto; padding: 20px; border-radius: 10px; background: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
 
                         /* Button Container */
-                        .button-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
-                        .button { display: flex; align-items: center; gap: 10px; padding: 10px 15px; background: #cccc00; color: white; text-decoration: none; border-radius: 40px; transition: 0.3s; }
+                        .button-container {
+                            display: flex;
+                            justify-content: space-between;
+                            gap: 2%;
+                            margin-top: 20px;
+                            flex-wrap: nowrap;
+                        }
+                        .button {
+                            flex: 1;
+                            padding: 10px 0;
+                            font-size: 3vw;
+                            background-color: #e6e600;
+                            color: white;
+                            border: 40px;
+                            border-radius: 40px;
+                            cursor: pointer;
+                            text-decoration: none;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            transition: background-color 0.3s;
+                        }
                         .button:hover { background: #ffff66; }
 
                         /* Icon Styling */
                         .button img, .button i {
-                            width: 12vw;
-                            height: 12vw;
-                            margin-bottom: 5px;
+                            width: 5vw;
+                            height: 5vw;
                         }
 
                         /* Responsive Design */
-                        @media (max-width: 600px) {
+                        @media (max-width: 1000px) {
                             .button { width: 100%; justify-content: center; }
                         }
                         """)
