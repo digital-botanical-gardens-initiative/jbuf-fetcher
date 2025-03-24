@@ -26,12 +26,9 @@ mypy = "^1.5.1"
 pre-commit = "^3.4.0"
 tox = "^4.11.1"
 fugue = "^0.9.1"
-pyspark = "^3.5.5"
 snowflake-connector-python = "^3.14.0"
 types-requests = "^2.32.0.20250306"
 pandas-stubs = "^2.2.3.250308"
-setuptools = "^78.0.1"
-wheel = "^0.45.1"
 
 
 
