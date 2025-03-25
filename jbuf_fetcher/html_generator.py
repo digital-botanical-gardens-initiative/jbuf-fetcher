@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def generate_homepage(buttons: dict, data_path: str) -> str:
-    doc, tag, text = Doc().tagtext()
+    doc, tag, text, line = Doc().ttl()
 
     with tag("html"), tag("head"), tag("title"):
         text("Home")
@@ -29,7 +29,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; text-align: center; }
 
             /* Centered container */
-            .container { width: 100%; margin: 20px auto; padding: 20px; border-radius: 40px; background: #c5cfbf; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+            .container { width: 100%; margin: 20px auto; padding: 20px; border-radius: 40px; background: #d7dfd3; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
 
             /* Button Container */
             .button-container {
@@ -75,8 +75,106 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             @media (max-width: 1000px) {
                 .button { width: 100%; justify-content: center; }
             }
-            """)
 
+            .progress-container {
+                width: 100%;
+                height: 30px;
+                background-color: #fff;  /* white background */
+                border-radius: 20px;
+                position: relative;
+                box-sizing: border-box;
+                margin-bottom: 10px; /* Espacement entre les projets */
+            }
+
+            .progress-bar {
+                height: 100%;
+                border-radius: 20px;
+                position: absolute;
+                top: 0;
+            }
+
+            /* Specific color for each status*/
+            .collected {
+                background-color: #ffc34d;
+                height: 30px;
+            }
+
+            .extracted {
+                background-color: #79d279;
+                height: 25px;
+            }
+
+            .profiled {
+                background-color: #8080ff;
+                height: 20px;
+            }
+
+            .small-text {
+                font-size: 15px;
+                color: #888;
+                margin-bottom: 15px;
+            }
+
+            .legend {
+                display: flex;
+                justify-content: space-around;
+                margin-top: 10px;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+            }
+
+            .legend-circle {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin-right: 5px;
+            }
+
+            .legend-text {
+                font-size: 14px;
+            }
+
+            .details-container {
+                display: none;
+                margin-top: 10px;
+                padding: 10px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .details-container.open {
+                display: block;
+                height: auto;
+                transition: all 0.3s ease-in-out;
+            }
+
+            .details-button {
+                padding: 10px;
+                background-color: #5c7444;
+                color: white;
+                border: none;
+                border-radius: 40px;
+                cursor: pointer;
+                font-size: 14px;
+                margin-top: 10px;
+            }
+
+            .details-button:hover {
+                background-color: #94a58c;
+            }
+            """)
+    # Add JavaScript to manage display
+    with tag("script"):
+        doc.asis("""
+            function toggleDetails(idx) {
+                var detailsContainer = document.getElementById('details-' + idx);
+                detailsContainer.classList.toggle('open');
+            }
+        """)
     # Button container
     with tag("body"), tag("div", klass="container"):
         with tag("h1"):
@@ -89,13 +187,6 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                         pass
                     text(button_name)
 
-    # Status container
-    with tag("body"), tag("div", klass="container"):
-        with tag("h1"):
-            text("Collection status")
-        with tag("p"):
-            text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
-
     # Get collection data
     # resolved_data = os.path.join(data_path, "resolved_data.json")
     # not_resolved_data = os.path.join(data_path, "not_resolved_data.json")
@@ -104,12 +195,71 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
     projects = json.loads(str(os.getenv("PROJECT")))
 
     # Create containers for projects
-    for i in projects:
+    for idx, i in enumerate(projects):
         with tag("body"), tag("div", klass="container"), tag("h1"):
+            text("Collection status ")
             text(i.upper())
+            with tag("p", klass="small-text"):
+                text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
+
+            # Progress bar
+            collected = collected_values[idx]
+            extracted = extracted_values[idx]
+            profiled = profiled_values[idx]
+
+            with tag("div", klass="progress-container"):
+                with tag("div", klass="progress-bar collected", style=f"width: {collected}%"):
+                    pass
+                with tag("div", klass="progress-bar extracted", style=f"width: {extracted}%"):
+                    pass
+                with tag("div", klass="progress-bar profiled", style=f"width: {profiled}%"):
+                    pass
+
+            # Legend
+            with tag("div", klass="legend"):
+                with tag("div", klass="legend-item"):
+                    with tag("span", klass="legend-circle", style="background-color: #8080ff;"):
+                        pass
+                    with tag("span", klass="legend-text"):
+                        text(f"Profiled ({profiled}%)")
+
+                with tag("div", klass="legend-item"):
+                    with tag("span", klass="legend-circle", style="background-color: #79d279;"):
+                        pass
+                    with tag("span", klass="legend-text"):
+                        text(f"Extracted ({extracted}%)")
+
+                with tag("div", klass="legend-item"):
+                    with tag("span", klass="legend-circle", style="background-color: #ffc34d;"):
+                        pass
+                    with tag("span", klass="legend-text"):
+                        text(f"Collected ({collected}%)")
+            # Details button
+            with tag("button", klass="details-button", onclick=f"toggleDetails({idx})"):
+                text("Détails")
+
+            # Details section to be displayed when clicked
+            with tag("div", klass="details-container", id=f"details-{idx}"):
+                with tag("p"):
+                    text(f"Détails supplémentaires pour le projet {i}:")
+                with tag("ul"):
+                    with tag("li"):
+                        text(f"Status Collecté: {collected}%")
+                    with tag("li"):
+                        text(f"Status Extracted: {extracted}%")
+                    with tag("li"):
+                        text(f"Status Profiled: {profiled}%")
+                    with tag("li"):
+                        text(f"Date de dernière mise à jour: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     return doc.getvalue()
 
+
+# Variable progress bar
+progress_values = [50, 30]
+collected_values = [60, 30]
+extracted_values = [40, 15]
+profiled_values = [15, 5]
 
 # Generate buttons with icons
 buttons = {
