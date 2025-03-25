@@ -77,7 +77,7 @@ if response.status_code == 200:
 
         # Do not get the line if there is no sample_name
         if sample_name:
-            filtered_data.append({"sample_name": sample_name, "sample_id": sample_id, "qfield_project": project})
+            filtered_data.append({"species": sample_name, "sample_id": sample_id, "qfield_project": project})
 
     # Path file
     data_folder = os.getenv("DATA_PATH", ".")

@@ -11,10 +11,14 @@ load_dotenv()
 
 data_path = str(os.getenv("DATA_PATH"))
 
-json_path = os.path.join(data_path, "directus_data.json")
+json_path_directus = os.path.join(data_path, "directus_data.json")
+json_path_botavista = os.path.join(data_path, "botavista_data.json")
 
-with open(json_path, encoding="utf-8") as f:
-    data = json.load(f)
+with open(json_path_directus, encoding="utf-8") as f:
+    data_directus = json.load(f)
+
+with open(json_path_botavista, encoding="utf-8") as f:
+    data_botavista = json.load(f)
 
 session = requests.Session()
 
@@ -24,7 +28,7 @@ url = "https://finder.globalnames.org/api/v1/find"
 def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
     """Resolve scientific name and return modified JSON object."""
     # Get name and replace underscores by white spaces
-    raw_name = str(obj.get("sample_name", "")).replace("_", " ")
+    raw_name = str(obj.get("species", "")).replace("_", " ")
 
     # Remove all non alphabetical characters
     alphabetical_name = re.sub(r"[^a-zA-Z ]", "", raw_name).strip()
@@ -84,7 +88,7 @@ def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
                     matched_name = verification.get("name")
                     obj["submitted_name"] = cleaned_name
                     obj["resolution_confidence"] = "low"
-                    obj["resolved_sample_name"] = matched_name
+                    obj["resolved_species"] = matched_name
                     return obj, True
                 # If bestResult is present
                 elif (
@@ -101,7 +105,7 @@ def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
                         confidence = "medium"
                     obj["submitted_name"] = cleaned_name
                     obj["resolution_confidence"] = confidence
-                    obj["resolved_sample_name"] = matched_name
+                    obj["resolved_species"] = matched_name
                     return obj, True
                 else:
                     obj["submitted_name"] = cleaned_name
@@ -121,36 +125,41 @@ def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         return obj, False
 
 
-# Parallel processing using ThreadPoolExecutor
-resolved_results = []
-error_results = []
-excluded_results = []
+def batch_run(data: dict, collection: str) -> None:
+    # Parallel processing using ThreadPoolExecutor
+    resolved_results = []
+    error_results = []
+    excluded_results = []
 
-with ThreadPoolExecutor(max_workers=5) as executor:
-    future_to_obj = {executor.submit(resolve_name, obj): obj for obj in data}
-    for future in as_completed(future_to_obj):
-        result, success = future.result()
-        if success:
-            resolved_results.append(result)
-        else:
-            if result.get("resolution_error", "") == "Excluded":
-                excluded_results.append(result)
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        resolved_data = {executor.submit(resolve_name, obj): obj for obj in data}
+        for resolved_obj in as_completed(resolved_data):
+            result, success = resolved_obj.result()
+            if success:
+                resolved_results.append(result)
             else:
-                error_results.append(result)
+                if result.get("resolution_error", "") == "Excluded":
+                    excluded_results.append(result)
+                else:
+                    error_results.append(result)
 
-data_file = os.path.join(data_path, "resolved_data.json")
-error_file = os.path.join(data_path, "not_resolved_data.json")
-excluded_file = os.path.join(data_path, "excluded_data.json")
+    data_file = os.path.join(data_path, f"resolved_data_{collection}.json")
+    error_file = os.path.join(data_path, f"not_resolved_data_{collection}.json")
+    excluded_file = os.path.join(data_path, f"excluded_data_{collection}.json")
 
-with open(data_file, "w", encoding="utf-8") as f:
-    json.dump(resolved_results, f, indent=4, ensure_ascii=False)
+    with open(data_file, "w", encoding="utf-8") as f:
+        json.dump(resolved_results, f, indent=4, ensure_ascii=False)
 
-with open(error_file, "w", encoding="utf-8") as f:
-    json.dump(error_results, f, indent=4, ensure_ascii=False)
+    with open(error_file, "w", encoding="utf-8") as f:
+        json.dump(error_results, f, indent=4, ensure_ascii=False)
 
-with open(excluded_file, "w", encoding="utf-8") as f:
-    json.dump(excluded_results, f, indent=4, ensure_ascii=False)
+    with open(excluded_file, "w", encoding="utf-8") as f:
+        json.dump(excluded_results, f, indent=4, ensure_ascii=False)
 
-print(
-    f"Resolved data saved to {data_file}, unresolved data saved to {error_file}, Excluded data saved to {excluded_file}"
-)
+    print(
+        f"Resolved data saved to {data_file}, unresolved data saved to {error_file}, Excluded data saved to {excluded_file}"
+    )
+
+
+batch_run(data_directus, "directus")
+batch_run(data_botavista, "botavista")
