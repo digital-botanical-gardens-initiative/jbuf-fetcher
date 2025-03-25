@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def generate_homepage(buttons: dict, data_path: str) -> str:
-    doc, tag, text = Doc().tagtext()
+    doc, tag, text, line = Doc().ttl()
 
     with tag("html"), tag("head"), tag("title"):
         text("Home")
@@ -75,6 +75,45 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             @media (max-width: 1000px) {
                 .button { width: 100%; justify-content: center; }
             }
+
+            .progress-container {
+                width: 100%;
+                height: 30px;
+                background-color: #fff;  /* Fond blanc pour toute la zone de progression */
+                border-radius: 20px;
+                position: relative;
+                box-sizing: border-box;
+                margin-bottom: 10px; /* Espacement entre les projets */
+            }
+
+            .progress-bar {
+                height: 100%;
+                border-radius: 20px;
+                position: absolute;
+                top: 0;
+            }
+
+            /* Specific color for each status*/
+            .collected {
+                background-color: #244c0c;
+                height: 30px;
+            }
+
+            .extracted {
+                background-color: #4f6b3a;
+                height: 25px;
+            }
+
+            .profiled {
+                background-color: #718964;
+                height: 20px;
+            }
+
+            .small-text {
+                font-size: 15px;
+                color: #888;
+                margin-bottom: 15px;
+            }
             """)
 
     # Button container
@@ -104,12 +143,32 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
     projects = json.loads(str(os.getenv("PROJECT")))
 
     # Create containers for projects
-    for i in projects:
+    for idx, i in enumerate(projects):
         with tag("body"), tag("div", klass="container"), tag("h1"):
+            text("Collection status ")
             text(i.upper())
+            with tag("p", klass="small-text"):
+                text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
+            collected = collected_values[idx]
+            extracted = extracted_values[idx]
+            profiled = profiled_values[idx]
+
+            with tag("div", klass="progress-container"):
+                with tag("div", klass="progress-bar collected", style=f"width: {collected}%"):
+                    pass
+                with tag("div", klass="progress-bar extracted", style=f"width: {extracted}%"):
+                    pass
+                with tag("div", klass="progress-bar profiled", style=f"width: {profiled}%"):
+                    pass
     return doc.getvalue()
 
+
+# Variable progress bar
+progress_values = [50, 30]
+collected_values = [60, 30]
+extracted_values = [40, 15]
+profiled_values = [15, 5]
 
 # Generate buttons with icons
 buttons = {
