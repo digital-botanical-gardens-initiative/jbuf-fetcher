@@ -61,7 +61,7 @@ echo "$MINUTE $HOUR $DAY"
 
 # Run fetcher_directus and taxo_resolver every 2 hours at 30
 if [[ "$MINUTE" == "30" && $((HOUR % 2)) -eq 0 ]]; then
-    run_script "fetcher_directus"
+    run_script "directus_fetcher"
     run_script "taxo_resolver"
 fi
 
