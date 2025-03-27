@@ -174,7 +174,18 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
 
              /* title details */
             .details-container h2 {
+                font-size: 30px;
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
+            .details-container h3 {
                 font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
+
+            .details-container ul {
+                font-size: 15px;
                 font-weight: bold;
                 margin-bottom: 15px;
             }
@@ -283,14 +294,22 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                 with tag("h2"):
                     text(f"Détails supplémentaires pour le projet {i}:")
 
-                if not project_data.empty:
-                    with tag("ul"):
-                        for _, row in project_data.iterrows():
-                            with tag("li"):
-                                text(f"{row.to_json(indent=2)}")  # Afficher chaque ligne du DataFrame sous forme JSON
-                else:
-                    with tag("p"):
-                        text("Aucune donnée supplémentaire disponible pour ce projet.")
+                with tag("h3"):
+                    text(f"Plants to collect in {i}")
+                    with tag("li"):
+                        text("Plant 1")
+                with tag("h3"):
+                    text("Not resolved Data")
+                    if not project_data.empty:
+                        with tag("ul"):
+                            for _, row in project_data.iterrows():
+                                with tag("li"):
+                                    text(
+                                        f"{row.to_json(indent=2)}"
+                                    )  # Afficher chaque ligne du DataFrame sous forme JSON
+                    else:
+                        with tag("p"):
+                            text("Aucune donnée supplémentaire disponible pour ce projet.")
 
     return doc.getvalue()
 
