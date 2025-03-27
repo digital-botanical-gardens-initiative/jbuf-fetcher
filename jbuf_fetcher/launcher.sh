@@ -62,13 +62,9 @@ echo "$MINUTE $HOUR $DAY"
 # Run fetcher_directus and taxo_resolver every 2 hours at 30
 if [[ "$MINUTE" == "30" && $((HOUR % 2)) -eq 0 ]]; then
     run_script "directus_fetcher"
+    run_script "botavista_fetcher"
     run_script "taxo_resolver"
 fi
-
-# Run fetcher_botavista every first day of month
-#if [[ "$DAY" == "01" && "$HOUR" == "00" && "$MINUTE" == "00" ]]; then
-    #run_script "fetcher_botavista"
-#fi
 
 # Update html
 run_script "html_generator"
