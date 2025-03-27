@@ -2,14 +2,36 @@ import json
 import os
 from datetime import datetime
 
+import pandas as pd
 from dotenv import load_dotenv
 from yattag import Doc
 
 load_dotenv()
 
 
+# Get json for not resolved data
+def load_json_as_dataframe() -> pd.DataFrame:
+    data_folder = os.getenv("DATA_PATH") or ""
+    json_file_path = os.path.join(data_folder, "not_resolved_data.json")
+
+    if not os.path.isfile(json_file_path):
+        print(f"Error : {json_file_path} is not a valid file.")
+        return pd.DataFrame()
+    with open(json_file_path, encoding="utf-8") as file:
+        data = json.load(file)
+    return pd.DataFrame(data)
+
+
+# Filters the DataFrame to retrieve only entries corresponding to the project
+def get_project_details(project_name: str, df: pd.DataFrame) -> pd.DataFrame:
+    if not df.empty and "qfield_project" in df.columns:
+        return df[df["qfield_project"] == project_name]
+    return pd.DataFrame()
+
+
+# Generate homepage
 def generate_homepage(buttons: dict, data_path: str) -> str:
-    doc, tag, text, line = Doc().ttl()
+    doc, tag, text = Doc().tagtext()
 
     with tag("html"), tag("head"), tag("title"):
         text("Home")
@@ -95,17 +117,17 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
 
             /* Specific color for each status*/
             .collected {
-                background-color: #ffc34d;
+                background-color: #ff9900;
                 height: 30px;
             }
 
             .extracted {
-                background-color: #79d279;
+                background-color: #ffee00;
                 height: 25px;
             }
 
             .profiled {
-                background-color: #8080ff;
+                background-color: #00e600;
                 height: 20px;
             }
 
@@ -138,12 +160,20 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             }
 
             .details-container {
+                font-size: 14px;
                 display: none;
                 margin-top: 10px;
                 padding: 10px;
                 background-color: #f9f9f9;
-                border-radius: 5px;
+                border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: left;
+            }
+
+             /* title */
+            .details-container h2 {
+                font-size: 20px;
+                font-weight: bold;
             }
 
             .details-container.open {
@@ -166,15 +196,19 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             .details-button:hover {
                 background-color: #94a58c;
             }
+
+            .details-container .sample-name {
+                font-weight: bold; /* Met en gras le contenu */
+            }
             """)
     # Add JavaScript to manage display
     with tag("script"):
         doc.asis("""
-            function toggleDetails(idx) {
-                var detailsContainer = document.getElementById('details-' + idx);
-                detailsContainer.classList.toggle('open');
-            }
-        """)
+             function toggleDetails(idx) {
+                 var detailsContainer = document.getElementById('details-' + idx);
+                 detailsContainer.classList.toggle('open');
+             }
+         """)
     # Button container
     with tag("body"), tag("div", klass="container"):
         with tag("h1"):
@@ -197,8 +231,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
     # Create containers for projects
     for idx, i in enumerate(projects):
         with tag("body"), tag("div", klass="container"), tag("h1"):
-            text("Collection status ")
-            text(i.upper())
+            text(f"Collection status {i.upper()}")
             with tag("p", klass="small-text"):
                 text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
@@ -218,19 +251,19 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             # Legend
             with tag("div", klass="legend"):
                 with tag("div", klass="legend-item"):
-                    with tag("span", klass="legend-circle", style="background-color: #8080ff;"):
+                    with tag("span", klass="legend-circle", style="background-color: #00e600;"):
                         pass
                     with tag("span", klass="legend-text"):
                         text(f"Profiled ({profiled}%)")
 
                 with tag("div", klass="legend-item"):
-                    with tag("span", klass="legend-circle", style="background-color: #79d279;"):
+                    with tag("span", klass="legend-circle", style="background-color: #ffee00;"):
                         pass
                     with tag("span", klass="legend-text"):
                         text(f"Extracted ({extracted}%)")
 
                 with tag("div", klass="legend-item"):
-                    with tag("span", klass="legend-circle", style="background-color: #ffc34d;"):
+                    with tag("span", klass="legend-circle", style="background-color: #ff9900;"):
                         pass
                     with tag("span", klass="legend-text"):
                         text(f"Collected ({collected}%)")
@@ -238,19 +271,23 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             with tag("button", klass="details-button", onclick=f"toggleDetails({idx})"):
                 text("Détails")
 
+            # Get specific information for each project
+            df = load_json_as_dataframe()
+            project_data = get_project_details(i, df)
+
             # Details section to be displayed when clicked
             with tag("div", klass="details-container", id=f"details-{idx}"):
                 with tag("p"):
                     text(f"Détails supplémentaires pour le projet {i}:")
-                with tag("ul"):
-                    with tag("li"):
-                        text(f"Status Collecté: {collected}%")
-                    with tag("li"):
-                        text(f"Status Extracted: {extracted}%")
-                    with tag("li"):
-                        text(f"Status Profiled: {profiled}%")
-                    with tag("li"):
-                        text(f"Date de dernière mise à jour: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+                if not project_data.empty:
+                    with tag("ul"):
+                        for _, row in project_data.iterrows():
+                            with tag("li"):
+                                text(f"{row.to_json(indent=2)}")  # Afficher chaque ligne du DataFrame sous forme JSON
+                else:
+                    with tag("p"):
+                        text("Aucune donnée supplémentaire disponible pour ce projet.")
 
     return doc.getvalue()
 
