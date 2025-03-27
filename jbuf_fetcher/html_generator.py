@@ -168,12 +168,15 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 text-align: left;
+                line-height: 1.7;
+
             }
 
-             /* title */
+             /* title details */
             .details-container h2 {
                 font-size: 20px;
                 font-weight: bold;
+                margin-bottom: 15px;
             }
 
             .details-container.open {
@@ -277,7 +280,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
 
             # Details section to be displayed when clicked
             with tag("div", klass="details-container", id=f"details-{idx}"):
-                with tag("p"):
+                with tag("h2"):
                     text(f"Détails supplémentaires pour le projet {i}:")
 
                 if not project_data.empty:
