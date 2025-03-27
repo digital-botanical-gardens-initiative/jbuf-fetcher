@@ -29,6 +29,26 @@ def get_project_details(project_name: str, df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame()
 
 
+# Variable test for sector and plant
+list_plants = [
+    {"name": "Plante 1", "sector": "Serre 1"},
+    {"name": "Plante 2", "sector": "Serre 2"},
+    {"name": "Plante 3", "sector": "Serre 1"},
+    {"name": "Plante 4", "sector": "Système"},
+    {"name": "Plante 5", "sector": "Aplinarium"},
+    {"name": "Plante 6", "sector": "Système"},
+]
+
+sectors: dict[str, list[str]] = {"Serre 1": [], "Serre 2": [], "Système": [], "Aplinarium": []}
+
+
+# Organise plants in sectors
+for plant in list_plants:
+    sector = plant["sector"]
+    if sector in sectors:
+        sectors[sector].append(plant["name"])
+
+
 # Generate homepage
 def generate_homepage(buttons: dict, data_path: str) -> str:
     doc, tag, text = Doc().tagtext()
@@ -294,10 +314,19 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                 with tag("h2"):
                     text(f"Détails supplémentaires pour le projet {i}:")
 
+                # Plant to collect with sectors
                 with tag("h3"):
                     text(f"Plants to collect in {i}")
-                    with tag("li"):
-                        text("Plant 1")
+                    for sector, plants in sectors.items():
+                        with tag("p"):
+                            text(f"Plants to collect in {sector}")
+
+                        with tag("ul"):
+                            for plant in plants:
+                                with tag("li"):
+                                    text(plant)
+
+                # Not resolved data list
                 with tag("h3"):
                     text("Not resolved Data")
                     if not project_data.empty:
@@ -319,6 +348,7 @@ progress_values = [50, 30]
 collected_values = [60, 30]
 extracted_values = [40, 15]
 profiled_values = [15, 5]
+
 
 # Generate buttons with icons
 buttons = {
