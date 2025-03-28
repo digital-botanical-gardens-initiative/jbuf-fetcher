@@ -18,7 +18,11 @@ env_path="${p}/.env"
 source "${env_path}"
 
 mkdir -p "${DATA_PATH}"
+mkdir -p "${HTML_PATH}"
 mkdir -p "${LOGS_PATH}"
+
+cp "./jbuf_fetcher/styles.css" "${HTML_PATH}/styles.css"
+cp "-r" "./jbuf_fetcher/images" "${HTML_PATH}"
 
 # Clean logs folder if the used space is greater than 100MB
 SIZE_LIMIT_MB=100
@@ -69,5 +73,5 @@ fi
 # Update html
 run_script "html_generator"
 
-# Transfer the html file to the server
+# Transfer the html and CSS file to the server
 eval "$RSYNC_COMMAND"
