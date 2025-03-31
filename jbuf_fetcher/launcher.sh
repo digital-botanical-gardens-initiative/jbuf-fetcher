@@ -22,7 +22,7 @@ mkdir -p "${HTML_PATH}"
 mkdir -p "${LOGS_PATH}"
 
 cp "./jbuf_fetcher/styles.css" "${HTML_PATH}/styles.css"
-cp "-r" "./jbuf_fetcher/images" "${HTML_PATH}"
+cp "-r" "./images" "${HTML_PATH}"
 
 # Clean logs folder if the used space is greater than 100MB
 SIZE_LIMIT_MB=100
