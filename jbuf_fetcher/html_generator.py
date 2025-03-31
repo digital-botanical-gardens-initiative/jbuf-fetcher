@@ -175,12 +175,17 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
 
             # Details section to be displayed when clicked
             with tag("div", klass="details-container", id=f"details-{idx}"):
-                with tag("h2"):
+                with tag("h1"):
                     text(f"Additional details for project {i}:")
 
                 # Test plant by sectors with json
                 with tag("h2"):
                     text("Plants to collect by sector")
+
+                # Total number of plants to be collected
+                total_plants = sum(len(plants) for plants in secteurs_dict.values())
+                with tag("p", klass="small-text"):
+                    text(f"{total_plants} plants to collect")
 
                 for sector, plants in secteurs_dict.items():
                     with tag("h3"):
@@ -192,15 +197,27 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                                 text(plant["idTaxon"])
 
                 # Not resolved data list
-                with tag("h2"):
+                with tag("h1"):
                     text("Not resolved Data")
+
+                    # count of not resolved data
+                    num_items = len(project_data)  # Compter le nombre d'éléments
+                    with tag("p", klass="small-text"):
+                        text(f"{num_items} items not resolved")
+
+                    # list
                     if not project_data.empty:
                         with tag("ul"):
                             for _, row in project_data.iterrows():
                                 with tag("li"):
-                                    text(
-                                        f"{row.to_json(indent=2)}"
-                                    )  # Afficher chaque ligne du DataFrame sous forme JSON
+                                    with tag("strong"):
+                                        text(f"Sample Name: {row['sample_name']}")
+                                    with tag("ul"):
+                                        for key, value in row.items():
+                                            if key != "sample_name":
+                                                with tag("li"):
+                                                    text(f"{key}: {value}")
+
                     else:
                         with tag("p"):
                             text("No suplementary data for this project.")

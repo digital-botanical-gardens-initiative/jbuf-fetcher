@@ -7,6 +7,81 @@
   text-align: center;
 }
 
+/* ====================================
+   Global Styles
+   ==================================== */
+
+/* Global heading style */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Specific styles for each level of heading */
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+/* Global body style */
+body {
+  font-family: Arial, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+/* ====================================
+   Styles for Specific Containers
+   ==================================== */
+
+.details-container h2 {
+  font-size: 10px;
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.details-container h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.details-container ul {
+  font-size: 15px;
+  margin-bottom: 15px;
+  text-align: left;
+  margin-left: 10px;
+}
+
+.details-container li {
+  font-size: 15px;
+  margin-bottom: 15px;
+  text-align: justify;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+/* ====================================
+   Layout
+   ==================================== */
+
 /* Centered container */
 .container {
   width: 100%;
@@ -16,6 +91,10 @@
   background: #d7dfd3;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* ====================================
+   Components (Buttons, Forms, etc.)
+   ==================================== */
 
 /* Button Container */
 .button-container {
@@ -60,14 +139,6 @@
   text-align: left;
 }
 
-/* Responsive Design */
-@media (max-width: 1000px) {
-  .button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
 .progress-container {
   width: 100%;
   height: 30px;
@@ -101,12 +172,14 @@
   height: 20px;
 }
 
+/* small text */
 .small-text {
   font-size: 15px;
   color: #888;
   margin-bottom: 15px;
 }
 
+/* legend */
 .legend {
   display: flex;
   justify-content: space-around;
@@ -129,6 +202,7 @@
   font-size: 14px;
 }
 
+/* details */
 .details-container {
   font-size: 14px;
   display: none;
@@ -139,35 +213,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: left;
   line-height: 1.7;
-}
-
-/* title details */
-.details-container h2 {
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-.details-container h3 {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.details-container ul {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: left;
-  margin-left: 10px;
-}
-
-.details-container li {
-  font-size: 15px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: justify;
-  margin-left: 15px;
-  margin-right: 15px;
 }
 
 .details-container.open {
@@ -191,6 +236,14 @@
   background-color: #94a58c;
 }
 
-.details-container .sample-name {
-  font-weight: bold; /* Met en gras le contenu */
+/* ====================================
+   Responsive Design
+   ==================================== */
+
+/* Responsive Design */
+@media (max-width: 1000px) {
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
 }
