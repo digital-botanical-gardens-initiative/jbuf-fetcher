@@ -8,7 +8,7 @@ cd $p
 
 # Update repository
 git pull origin main
-
+echo "$POETRY_PATH install"
 eval "$POETRY_PATH install"
 
 # .env path
