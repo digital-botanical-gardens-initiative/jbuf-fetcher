@@ -12,7 +12,7 @@ echo "$POETRY_PATH install"
 eval "$POETRY_PATH install"
 
 # .env path
-echo "${p}/.env"
+echo "${p}"
 env_path="${p}/.env"
 
 # Load the .env file
