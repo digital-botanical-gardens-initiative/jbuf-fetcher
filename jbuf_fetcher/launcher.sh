@@ -3,25 +3,28 @@
 # To obtain the actual path to repo folder
 p=$(dirname $(dirname $(realpath $0)))
 
+# .env path
+env_path="${p}/.env"
+
+# Load the .env file
+source "${env_path}"
+
 # Go to repository
 cd $p
 
 # Update repository
 git pull origin main
-echo "$POETRY_PATH install"
+
+# Update python dependencies
 eval "$POETRY_PATH install"
 
-# .env path
-env_path="${p}/.env"
-
-echo $env_path
-
-mkdir -p "${DATA_PATH}"
-mkdir -p "${HTML_PATH}"
-mkdir -p "${LOGS_PATH}"
+# Create folders
+mkdir -p $DATA_PATH
+mkdir -p $HTML_PATH
+mkdir -p $LOGS_PATH
 
 cp "./jbuf_fetcher/styles.css" "${HTML_PATH}/styles.css"
-cp "-r" "./images" "${HTML_PATH}"
+cp -r "./images" "${HTML_PATH}"
 
 # Clean logs folder if the used space is greater than 100MB
 SIZE_LIMIT_MB=100
