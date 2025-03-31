@@ -117,16 +117,16 @@ def is_treated(sample_id: str) -> tuple[bool, bool]:
     extracted = get_child_container_id(container_id, "Extraction_Data", "sample_container")
     if extracted == 0:
         return False, False
-    
+
     # Check if the sample is aliquoted
     aliquoted = get_child_container_id(extracted, "Aliquoting_Data", "sample_container")
     if aliquoted == 0:
         return True, False
-    
+
     # Check if the sample is profiled
     profiled = get_child_container_id(aliquoted, "MS_Data", "id")
     return True, profiled != 0
-    
+
 
 def get_child_container_id(container_id: int, collection: str, field_of_interest: str) -> int:
     # Make directus request
@@ -141,11 +141,12 @@ def get_child_container_id(container_id: int, collection: str, field_of_interest
         if response.json()["data"] == []:
             return 0
         else:
-            child_container_id = response.json()["data"][0][field_of_interest]
+            child_container_id = int(response.json()["data"][0][field_of_interest])
             return child_container_id
     else:
         print(f"Error: status: {response.status_code} - message: {response.text}")
         exit()
+
 
 def get_container_id(sample_id: str) -> int:
     # Make directus request
