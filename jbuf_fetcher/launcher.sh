@@ -16,9 +16,6 @@ env_path="${p}/.env"
 
 echo $env_path
 
-# Load the .env file
-source "${env_path}"
-
 mkdir -p "${DATA_PATH}"
 mkdir -p "${HTML_PATH}"
 mkdir -p "${LOGS_PATH}"
