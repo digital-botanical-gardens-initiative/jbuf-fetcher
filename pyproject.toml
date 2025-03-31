@@ -12,7 +12,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-datacompy = "^0.16.4"
 pandas = "^2.2.3"
 requests = "^2.32.3"
 dotenv = "^0.9.9"
