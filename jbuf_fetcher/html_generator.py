@@ -99,7 +99,6 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
         ):
             pass
 
-
     # Add JavaScript to manage display
     with tag("script"):
         doc.asis("""
