@@ -1,5 +1,7 @@
-import os
 import json
+import os
+from typing import Any, Optional
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,16 +11,18 @@ data_folder = os.getenv("DATA_PATH") or ""
 file_path_directus = os.path.join(data_folder, "resolved_data_directus.json")
 file_path_botavista = os.path.join(data_folder, "resolved_data_botavista.json")
 
-def load_json(file_path, label):
+
+def load_json(file_path: str, label: str) -> Optional[Any]:
     if os.path.exists(file_path):
-        with open(file_path, "r", encoding="utf-8") as file:
+        with open(file_path, encoding="utf-8") as file:
             data = json.load(file)
         print(f"{label} successfully charged")
         return data
     else:
         print(f"Error : the file {file_path} does not exist")
         return None
-    
+
+
 data_botavista = load_json(file_path_botavista, "Botavista")
 data_directus = load_json(file_path_directus, "Directus")
 
