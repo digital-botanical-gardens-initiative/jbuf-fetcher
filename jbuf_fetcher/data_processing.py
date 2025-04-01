@@ -1,7 +1,7 @@
 import json
 import os
-from typing import Any, Optional
 
+import pandas as pd
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,38 +11,38 @@ data_folder = os.getenv("DATA_PATH") or ""
 file_path_directus = os.path.join(data_folder, "resolved_data_directus.json")
 file_path_botavista = os.path.join(data_folder, "resolved_data_botavista.json")
 
+# Get projects
+projects = json.loads(str(os.getenv("PROJECT")))
 
-def load_json(file_path: str, label: str) -> Optional[Any]:
+
+def load_json_as_df(file_path: str) -> pd.DataFrame:
     if os.path.exists(file_path):
         with open(file_path, encoding="utf-8") as file:
             data = json.load(file)
-        print(f"{label} successfully charged")
-        return data
+        print(f"{file_path} successfully charged")
+        return pd.DataFrame(data)
     else:
         print(f"Error : the file {file_path} does not exist")
-        return None
+        exit()
 
 
-data_botavista = load_json(file_path_botavista, "Botavista")
-data_directus = load_json(file_path_directus, "Directus")
+def create_report() -> None:
+    # Load data
+    df_botavista = load_json_as_df(file_path_botavista)
+    df_directus = load_json_as_df(file_path_directus)
 
-print(f" Botavista Data : {data_botavista[:2] if data_botavista else 'not charged'}")
-print(f" Directus Data : {data_directus[:2] if data_directus else 'not charged'}")
-# Split the data lists by projects
+    # Drop unnecessary columns
+    df_botavista = df_botavista.drop(["species", "submitted_name", "resolution_confidence"], axis=1)
+    df_directus = df_directus.drop(["species", "submitted_name", "resolution_confidence"], axis=1)
 
-# for each project :
+    # Ensure unique species per project (one entry per species per project)
+    df_botavista = df_botavista.drop_duplicates(subset=["resolved_species", "qfield_project"])
+    df_directus = df_directus.drop_duplicates(subset=["resolved_species", "qfield_project"])
 
-# Compare botavista and directus
-
-# Get the collected %
-
-# Compare botavista and directus "extracted = true"
-
-# Get the extracted %
-
-# Compare botavista and directus "profiled = true"
-
-# Get the profiled %
+    merged_df = pd.merge(
+        df_botavista, df_directus, on=["resolved_species", "qfield_project"], how="outer", indicator="indicator"
+    )
+    print(merged_df[merged_df["indicator"] == "both"])
 
 
-# Create a json with [project, % collected, % extracted, % profiled] and json not_resolved_data (will be use in html_generator)
+create_report()
