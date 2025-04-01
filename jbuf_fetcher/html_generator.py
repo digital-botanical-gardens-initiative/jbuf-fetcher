@@ -33,7 +33,7 @@ def get_project_details(project_name: str, df: pd.DataFrame) -> pd.DataFrame:
 
 
 # Test json for plants and sectors
-CSV_FILE = "../species_list.csv"
+CSV_FILE = "species_list.csv"
 JSON_FILE = os.path.join(data_folder, "filtered_sector_data.json")
 
 try:
