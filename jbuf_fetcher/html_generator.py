@@ -16,7 +16,7 @@ html_folder = os.getenv("HTML_PATH") or ""
 # Not resolved data
 # Get json for not resolved data
 def load_json_as_dataframe() -> pd.DataFrame:
-    json_file_path = os.path.join(data_folder, "not_resolved_data.json")
+    json_file_path = os.path.join(data_folder, "not_resolved_data_directus.json")
     if not os.path.isfile(json_file_path):
         print(f"Error : {json_file_path} is not a valid file.")
         return pd.DataFrame()
@@ -33,7 +33,7 @@ def get_project_details(project_name: str, df: pd.DataFrame) -> pd.DataFrame:
 
 
 # Test json for plants and sectors
-CSV_FILE = "species_list.csv"
+CSV_FILE = "../species_list.csv"
 JSON_FILE = os.path.join(data_folder, "filtered_sector_data.json")
 
 try:
@@ -211,10 +211,10 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                             for _, row in project_data.iterrows():
                                 with tag("li"):
                                     with tag("strong"):
-                                        text(f"Sample Name: {row['sample_name']}")
+                                        text(f"Sample Name: {row['species']}")
                                     with tag("ul"):
                                         for key, value in row.items():
-                                            if key != "sample_name":
+                                            if key != "species":
                                                 with tag("li"):
                                                     text(f"{key}: {value}")
 
@@ -226,10 +226,10 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
 
 
 # Variable progress bar
-progress_values = [50, 30]
-collected_values = [60, 30]
-extracted_values = [40, 15]
-profiled_values = [15, 5]
+progress_values = [50, 30, 0]
+collected_values = [60, 30, 0]
+extracted_values = [40, 15, 0]
+profiled_values = [15, 5, 0]
 
 
 # Generate buttons with icons
