@@ -34,7 +34,7 @@ def create_report(df_botavista: pd.DataFrame, df_directus: pd.DataFrame) -> None
     merged_df = create_merged_df(df_botavista, df_directus)
 
     # Create array to store the global report
-    report = []
+    report = {}
 
     # Get projects list
     projects = projects_dict.keys()
@@ -48,10 +48,10 @@ def create_report(df_botavista: pd.DataFrame, df_directus: pd.DataFrame) -> None
         project_report = get_project_report(project_df, project)
 
         # Append project report to the global report
-        report.append(project_report)
+        report[project] = project_report
 
     # Generate json report
-    generate_json_report(report)
+    write_json_report(report)
 
 
 # Preparing df
@@ -133,7 +133,7 @@ def get_project_report(merged_df: pd.DataFrame, project: str) -> dict[str, Any]:
     }
 
     # Add project as key
-    final_json = {project: data_json}
+    final_json = data_json
 
     return final_json
 
@@ -159,7 +159,7 @@ def get_unresolved_data(project: str) -> tuple[list[dict[str, Any]], list[dict[s
 
 
 # Write json report
-def generate_json_report(report: list[dict[str, Any]]) -> None:
+def write_json_report(report: dict[Any, dict[str, Any]]) -> None:
     # Json path
     json_path = os.path.join(data_folder, "report.json")
 
