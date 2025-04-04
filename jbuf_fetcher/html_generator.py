@@ -27,6 +27,7 @@ def generate_homepage() -> None:
     write_html_file(doc.getvalue())
 
 
+# Create the HTML header
 def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     with tag("html"), tag("head"):
         with tag("title"):
@@ -44,6 +45,7 @@ def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> 
             pass
 
 
+# Create services buttons with icons
 def create_html_buttons(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     # Construct buttons with icons
     buttons = {
@@ -85,113 +87,135 @@ def load_json_report() -> dict[str, Any]:
         exit()
 
 
+# Generate projects
 def create_html_projects(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
-    # Get projects
-    project = os.getenv("PROJECT", "").split(",")
-
     # Get report
     report_data = load_json_report()
 
     # Create containers for projects
     for project_name, project_data in report_data.items():
-        # Get the percentages value
+        # Construct each project
+        create_html_project_container(tag, text, project_name, project_data)
+
+
+# Generate the HTML for each project
+def create_html_project_container(
+    tag: Callable[..., Any], text: Callable[[str], None], project_name: str, project_data: dict[str, Any]
+) -> None:
+    # Create a container for each project
+    with tag("div", klass="container"):
+        # Create header
+        create_project_header(tag, text, project_name)
+
+        # Create progressbar
         percentages = project_data.get("percentages", {})
-        collected_percent = percentages.get("collected_percent", 0)
-        extracted_percent = percentages.get("extracted_percent", 0)
-        profiled_percent = percentages.get("profiled_percent", 0)
+        create_project_progressbar(tag, text, percentages)
 
-        # Create a container for each project
-        with tag("div", klass="container"):
-            with tag("h2"):
-                text(f"Collection status for {project_name}")
+        # Create details
+        create_project_details(tag, text, project_name, project_data)
 
-            #     # Update date
-            with tag("p", klass="small-text"):
-                text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
-            # Create progressbar
-            with tag("div", klass="progress-container"):
-                with tag("div", klass="progress-bar collected", style=f"width: {collected_percent}%"):
-                    pass
-                with tag("div", klass="progress-bar extracted", style=f"width: {extracted_percent}%"):
-                    pass
-                with tag("div", klass="progress-bar profiled", style=f"width: {profiled_percent}%"):
-                    pass
+def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], project_name: str) -> None:
+    # Put title
+    with tag("h2"):
+        text(f"Collection status for {project_name}")
 
-            # Add a legend
-            with tag("div", klass="legend"):
-                with tag("div", klass="legend-item"):
-                    with tag("span", klass="legend-circle", style="background-color: #00e600;"):
-                        pass
-                    with tag("span", klass="legend-text"):
-                        text(f"Profiled ({profiled_percent:.1f}%)")
+    # Put update date
+    with tag("p", klass="small-text"):
+        text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
-                with tag("div", klass="legend-item"):
-                    with tag("span", klass="legend-circle", style="background-color: #ffee00;"):
-                        pass
-                    with tag("span", klass="legend-text"):
-                        text(f"Extracted ({extracted_percent:.1f}%)")
 
-                with tag("div", klass="legend-item"):
-                    with tag("span", klass="legend-circle", style="background-color: #ff9900;"):
-                        pass
-                    with tag("span", klass="legend-text"):
-                        text(f"Collected ({collected_percent:.1f}%)")
+def create_project_progressbar(
+    tag: Callable[..., Any], text: Callable[[str], None], percentages: dict[str, float]
+) -> None:
+    # Get the percentages value
+    collected_percent = percentages.get("collected_percent", 0)
+    extracted_percent = percentages.get("extracted_percent", 0)
+    profiled_percent = percentages.get("profiled_percent", 0)
 
-            # Details button
-            with tag("button", klass="details-button", onclick=f"toggleDetails({project})"):
-                text("Details")
+    # Create progressbar
+    with tag("div", klass="progress-container"):
+        with tag("div", klass="progress-bar collected", style=f"width: {collected_percent}%"):
+            pass
+        with tag("div", klass="progress-bar extracted", style=f"width: {extracted_percent}%"):
+            pass
+        with tag("div", klass="progress-bar profiled", style=f"width: {profiled_percent}%"):
+            pass
 
-            # # Get specific information for each project
-            # df = load_json_as_dataframe()
-            # project_data = get_project_details(i, df)
+    # Add a legend
+    with tag("div", klass="legend"):
+        with tag("div", klass="legend-item"):
+            with tag("span", klass="legend-circle", style="background-color: #00e600;"):
+                pass
+            with tag("span", klass="legend-text"):
+                text(f"Profiled ({profiled_percent:.1f}%)")
 
-            # Details section to be displayed when clicked
-            with tag("div", klass="details-container", id=f"details-{project}"), tag("h1"):
-                text(f"Additional details for project {project}:")
+        with tag("div", klass="legend-item"):
+            with tag("span", klass="legend-circle", style="background-color: #ffee00;"):
+                pass
+            with tag("span", klass="legend-text"):
+                text(f"Extracted ({extracted_percent:.1f}%)")
 
-                # Not resolved data list
-                with tag("h1"):
-                    text(f"Not resolved Data for {project_name}")
+        with tag("div", klass="legend-item"):
+            with tag("span", klass="legend-circle", style="background-color: #ff9900;"):
+                pass
+            with tag("span", klass="legend-text"):
+                text(f"Collected ({collected_percent:.1f}%)")
 
-                # Get the unresolved list
-                not_resolved_directus = report_data[project_name].get("not_resolved_directus", [])
-                not_resolved_botavista = report_data[project_name].get("not_resolved_botavista", [])
 
-                # List not_resolved_directus
-                if not_resolved_directus:
-                    with tag("h4"):
-                        text("Not Resolved Directus:")
-                    with tag("ul"):
-                        for item in not_resolved_directus:
-                            with tag("li"):
-                                text(str(item))
+def create_project_details(
+    tag: Callable[..., Any], text: Callable[[str], None], project_name: str, project_data: dict[str, Any]
+) -> None:
+    # Details button
+    with tag("button", klass="details-button", onclick=f"toggleDetails({project_name})"):
+        text("Details")
 
-                # List not_resolved_botavista
-                if not_resolved_botavista:
-                    with tag("h4"):
-                        text("Not Resolved Botavista:")
-                    with tag("ul"):
-                        for item in not_resolved_botavista:
-                            with tag("li"):
-                                text(str(item))
+    # Details section to be displayed when clicked
+    with tag("div", klass="details-container", id=f"details-{project_name}"), tag("h1"):
+        text(f"Additional details for project {project_name}:")
 
-            #         # list
-            #         if not project_data.empty:
-            #             with tag("ul"):
-            #                 for _, row in project_data.iterrows():
-            #                     with tag("li"):
-            #                         with tag("strong"):
-            #                             text(f"Sample Name: {row['species']}")
-            #                         with tag("ul"):
-            #                             for key, value in row.items():
-            #                                 if key != "species":
-            #                                     with tag("li"):
-            #                                         text(f"{key}: {value}")
+        # Not resolved data list
+        with tag("h1"):
+            text(f"Not resolved Data for {project_name}")
 
-            #         else:
-            #             with tag("p"):
-            #                 text("No suplementary data for this project.")
+        # Get the unresolved list
+        not_resolved_directus = project_data.get("not_resolved_directus", [])
+        not_resolved_botavista = project_data.get("not_resolved_botavista", [])
+
+        # List not_resolved_directus
+        if not_resolved_directus:
+            with tag("h4"):
+                text("Not Resolved Directus:")
+            with tag("ul"):
+                for item in not_resolved_directus:
+                    with tag("li"):
+                        text(str(item))
+
+        # List not_resolved_botavista
+        if not_resolved_botavista:
+            with tag("h4"):
+                text("Not Resolved Botavista:")
+            with tag("ul"):
+                for item in not_resolved_botavista:
+                    with tag("li"):
+                        text(str(item))
+
+    #         # list
+    #         if not project_data.empty:
+    #             with tag("ul"):
+    #                 for _, row in project_data.iterrows():
+    #                     with tag("li"):
+    #                         with tag("strong"):
+    #                             text(f"Sample Name: {row['species']}")
+    #                         with tag("ul"):
+    #                             for key, value in row.items():
+    #                                 if key != "species":
+    #                                     with tag("li"):
+    #                                         text(f"{key}: {value}")
+
+    #         else:
+    #             with tag("p"):
+    #                 text("No suplementary data for this project.")
 
 
 def write_html_file(content: str) -> None:
