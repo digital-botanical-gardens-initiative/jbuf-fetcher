@@ -1,53 +1,33 @@
 import json
 import os
 from datetime import datetime
-from typing import Any, cast
+from typing import Any, Callable, cast
 
 from dotenv import load_dotenv
 from yattag import Doc
 
 load_dotenv()
 
-# Get the folder from .env
-data_folder = os.getenv("DATA_PATH") or ""
-html_folder = os.getenv("HTML_PATH") or ""
-
-
-# Get projects
-project = os.getenv("PROJECT", "").split(",")
-
-
-# Function to load the report json
-def load_report_json() -> dict[str, Any]:
-    json_path = os.path.join(data_folder, "report.json")
-    try:
-        with open(json_path, encoding="utf-8") as file:
-            return cast(dict[str, Any], json.load(file))
-    except FileExistsError:
-        print(f"Error : the json file '{json_path}' does not exist")
-        return {}
-    except json.JSONDecodeError:
-        print(f"Error : Unable to decode JSON file {json_path} ")
-        return {}
-
-
-report_data = load_report_json()
-
-
-# Style
-# Path to css file
-css_path = os.path.relpath("styles.css")
-
-if not os.path.exists(css_path):
-    print("ERROR : the file does not exist at this location")
-else:
-    print(" The file is present at this location")
-
 
 # Generate homepage
-def generate_homepage(buttons: dict, data_path: str) -> str:
+def generate_homepage() -> None:
+    # Get constructors
     doc, tag, text = Doc().tagtext()
 
+    # Make header
+    create_html_header(tag, text)
+
+    # Create buttons
+    create_html_buttons(tag, text)
+
+    # Add projects
+    create_html_projects(tag, text)
+
+    # Write the HTML file
+    write_html_file(doc.getvalue())
+
+
+def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     with tag("html"), tag("head"):
         with tag("title"):
             text("Home")
@@ -63,14 +43,15 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
         ):
             pass
 
-    # Add JavaScript to manage display
-    with tag("script"):
-        doc.asis("""
-             function toggleDetails(idx) {
-                 var detailsContainer = document.getElementById('details-' + idx);
-                 detailsContainer.classList.toggle('open');
-             }
-         """)
+
+def create_html_buttons(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
+    # Construct buttons with icons
+    buttons = {
+        "Directus": {"url": "https://emi-collection.unifr.ch/directus", "icon": "images/directus.png"},
+        "NextCloud": {"url": "https://emi-collection.unifr.ch/nextcloud", "icon": "images/nextcloud.png"},
+        "QFieldCloud": {"url": "https://emi-collection.unifr.ch/qfieldcloud", "icon": "images/qfieldcloud.png"},
+    }
+
     # Button container
     with tag("body"), tag("div", klass="container"):
         with tag("h1"):
@@ -83,8 +64,35 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                         pass
                     text(button_name)
 
+
+# Load json report
+def load_json_report() -> dict[str, Any]:
+    # Get data folder from .env
+    data_folder = os.getenv("DATA_PATH") or ""
+
+    # Construct report path
+    json_path = os.path.join(data_folder, "report.json")
+
+    # Try to load json file
+    try:
+        with open(json_path, encoding="utf-8") as file:
+            return cast(dict[str, Any], json.load(file))
+    except FileExistsError:
+        print(f"Error : the json file '{json_path}' does not exist")
+        exit()
+    except json.JSONDecodeError:
+        print(f"Error : Unable to decode JSON file {json_path} ")
+        exit()
+
+
+def create_html_projects(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
+    # Get projects
+    project = os.getenv("PROJECT", "").split(",")
+
+    # Get report
+    report_data = load_json_report()
+
     # Create containers for projects
-    # for project in report_data:
     for project_name, project_data in report_data.items():
         # Get the percentages value
         percentages = project_data.get("percentages", {})
@@ -156,7 +164,6 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                         text("Not Resolved Directus:")
                     with tag("ul"):
                         for item in not_resolved_directus:
-                            print(item)
                             with tag("li"):
                                 text(str(item))
 
@@ -186,27 +193,20 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             #             with tag("p"):
             #                 text("No suplementary data for this project.")
 
-    return doc.getvalue()
+
+def write_html_file(content: str) -> None:
+    # Get html folder from .env
+    html_folder = os.getenv("HTML_PATH") or ""
+
+    # Create html path
+    html_file = os.path.join(html_folder, "home_page.html")
+
+    # Create file
+    with open(html_file, "w") as file:
+        file.write(content)
+
+    print("Responsive HTML file generated successfully!")
 
 
-# Generate buttons with icons
-buttons = {
-    "Directus": {"url": "https://emi-collection.unifr.ch/directus", "icon": "images/directus.png"},
-    "NextCloud": {"url": "https://emi-collection.unifr.ch/nextcloud", "icon": "images/nextcloud.png"},
-    "QFieldCloud": {"url": "https://emi-collection.unifr.ch/qfieldcloud", "icon": "images/qfieldcloud.png"},
-}
-
-# Check that data folder exists
-if not data_folder:
-    print("Error : no DATA_PATH")
-    exit(1)
-
-# Create html path
-html_file = os.path.join(html_folder, "home_page.html")
-
-# Generate HTML and save to file
-html_content = generate_homepage(buttons, html_folder)
-with open(html_file, "w") as file:
-    file.write(html_content)
-
-print("Responsive HTML file generated successfully!")
+# Generate the homepage
+generate_homepage()
