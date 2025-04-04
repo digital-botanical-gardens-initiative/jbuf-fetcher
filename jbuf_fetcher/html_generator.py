@@ -1,74 +1,38 @@
 import json
 import os
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
-import pandas as pd
 from dotenv import load_dotenv
 from yattag import Doc
 
 load_dotenv()
 
+# Get the folder from .env
 data_folder = os.getenv("DATA_PATH") or ""
 html_folder = os.getenv("HTML_PATH") or ""
 
 
-# Not resolved data
-# Get json for not resolved data
-def load_json_as_dataframe() -> pd.DataFrame:
-    json_file_path = os.path.join(data_folder, "not_resolved_data_directus.json")
-    if not os.path.isfile(json_file_path):
-        print(f"Error : {json_file_path} is not a valid file.")
-        return pd.DataFrame()
-    with open(json_file_path, encoding="utf-8") as file:
-        data = json.load(file)
-    return pd.DataFrame(data)
+# Get projects
+project = os.getenv("PROJECT", "").split(",")
 
 
-# Filters the DataFrame to retrieve only entries corresponding to the project
-def get_project_details(project_name: str, df: pd.DataFrame) -> pd.DataFrame:
-    if not df.empty and "qfield_project" in df.columns:
-        return df[df["qfield_project"] == project_name]
-    return pd.DataFrame()
+# Function to load the report json
+def load_report_json() -> dict[str, Any]:
+    json_path = os.path.join(data_folder, "report.json")
+    try:
+        with open(json_path, encoding="utf-8") as file:
+            return cast(dict[str, Any], json.load(file))
+    except FileExistsError:
+        print(f"Error : the json file '{json_path}' does not exist")
+        return {}
+    except json.JSONDecodeError:
+        print(f"Error : Unable to decode JSON file {json_path} ")
+        return {}
 
 
-# Test json for plants and sectors
-CSV_FILE = "species_list.csv"
-JSON_FILE = os.path.join(data_folder, "filtered_sector_data.json")
+report_data = load_report_json()
 
-try:
-    df = pd.read_csv(CSV_FILE, usecols=["idTaxon", "secteur"])
-except ValueError:
-    print("Columns do not exist")
-
-df = df.head(30)
-sector_plant_list = df.to_dict(orient="records")
-
-os.makedirs(data_folder, exist_ok=True)
-
-# Convert in Json
-with open(JSON_FILE, "w", encoding="utf-8") as json_file:
-    json.dump(sector_plant_list, json_file, ensure_ascii=False, indent=4)
-
-if not os.path.exists(JSON_FILE):
-    print(f"The file {JSON_FILE} does not exist in {data_folder}.")
-if os.path.getsize(JSON_FILE) == 0:
-    print(f"The file is empty : {JSON_FILE}")
-
-with open(JSON_FILE, encoding="utf-8") as json_file, open(JSON_FILE, encoding="utf-8") as json_file:
-    data_sector = json.load(json_file)
-
-
-print(f"Le fichier JSON a été créé et sauvegardé sous : {JSON_FILE}")
-
-# Organise by sectors
-secteurs_dict: dict[str, list[Any]] = {}
-for record in data_sector:
-    secteur = record.get("secteur")
-    if secteur:
-        if secteur not in secteurs_dict:
-            secteurs_dict[secteur] = []
-        secteurs_dict[secteur].append(record)
 
 # Style
 # Path to css file
@@ -119,117 +83,92 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                         pass
                     text(button_name)
 
-    # Get collection data
-    # resolved_data = os.path.join(data_path, "resolved_data.json")
-    # not_resolved_data = os.path.join(data_path, "not_resolved_data.json")
-
-    # Get projects
-    projects = json.loads(str(os.getenv("PROJECT")))
-
     # Create containers for projects
-    for idx, i in enumerate(projects):
-        with tag("body"), tag("div", klass="container"), tag("h1"):
-            text(f"Collection status {i.upper()}")
+    # for project in report_data:
+    for project_name, project_data in report_data.items():
+        # Get the percentages value
+        percentages = project_data.get("percentages", {})
+        collected_percent = percentages.get("collected_percent", 0)
+        extracted_percent = percentages.get("extracted_percent", 0)
+        profiled_percent = percentages.get("profiled_percent", 0)
+
+        # Create a container for each project
+        with tag("div", klass="container"):
+            with tag("h2"):
+                text(f"Collection status for {project_name}")
+
+            #     # Update date
             with tag("p", klass="small-text"):
                 text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
 
-            # Progress bar
-            collected = collected_values[idx]
-            extracted = extracted_values[idx]
-            profiled = profiled_values[idx]
-
+            # Create progressbar
             with tag("div", klass="progress-container"):
-                with tag("div", klass="progress-bar collected", style=f"width: {collected}%"):
+                with tag("div", klass="progress-bar collected", style=f"width: {collected_percent}%"):
                     pass
-                with tag("div", klass="progress-bar extracted", style=f"width: {extracted}%"):
+                with tag("div", klass="progress-bar extracted", style=f"width: {extracted_percent}%"):
                     pass
-                with tag("div", klass="progress-bar profiled", style=f"width: {profiled}%"):
+                with tag("div", klass="progress-bar profiled", style=f"width: {profiled_percent}%"):
                     pass
 
-            # Legend
+            # Add a legend
             with tag("div", klass="legend"):
                 with tag("div", klass="legend-item"):
                     with tag("span", klass="legend-circle", style="background-color: #00e600;"):
                         pass
                     with tag("span", klass="legend-text"):
-                        text(f"Profiled ({profiled}%)")
+                        text(f"Profiled ({profiled_percent:.1f}%)")
 
                 with tag("div", klass="legend-item"):
                     with tag("span", klass="legend-circle", style="background-color: #ffee00;"):
                         pass
                     with tag("span", klass="legend-text"):
-                        text(f"Extracted ({extracted}%)")
+                        text(f"Extracted ({extracted_percent:.1f}%)")
 
                 with tag("div", klass="legend-item"):
                     with tag("span", klass="legend-circle", style="background-color: #ff9900;"):
                         pass
                     with tag("span", klass="legend-text"):
-                        text(f"Collected ({collected}%)")
+                        text(f"Collected ({collected_percent:.1f}%)")
+
             # Details button
-            with tag("button", klass="details-button", onclick=f"toggleDetails({idx})"):
+            with tag("button", klass="details-button", onclick=f"toggleDetails({project})"):
                 text("Details")
 
-            # Get specific information for each project
-            df = load_json_as_dataframe()
-            project_data = get_project_details(i, df)
+            # # Get specific information for each project
+            # df = load_json_as_dataframe()
+            # project_data = get_project_details(i, df)
 
             # Details section to be displayed when clicked
-            with tag("div", klass="details-container", id=f"details-{idx}"):
-                with tag("h1"):
-                    text(f"Additional details for project {i}:")
+            with tag("div", klass="details-container", id=f"details-{project}"), tag("h1"):
+                text(f"Additional details for project {project}:")
 
-                # Test plant by sectors with json
-                with tag("h2"):
-                    text("Plants to collect by sector")
+            #     # Not resolved data list
+            #     with tag("h1"):
+            #         text("Not resolved Data")
 
-                # Total number of plants to be collected
-                total_plants = sum(len(plants) for plants in secteurs_dict.values())
-                with tag("p", klass="small-text"):
-                    text(f"{total_plants} plants to collect")
+            #         # count of not resolved data
+            #         num_items = len(project_data)  # Compter le nombre d'éléments
+            #         with tag("p", klass="small-text"):
+            #             text(f"{num_items} items not resolved")
 
-                for sector, plants in secteurs_dict.items():
-                    with tag("h3"):
-                        text(f"Plants to collect in {sector}")
+            #         # list
+            #         if not project_data.empty:
+            #             with tag("ul"):
+            #                 for _, row in project_data.iterrows():
+            #                     with tag("li"):
+            #                         with tag("strong"):
+            #                             text(f"Sample Name: {row['species']}")
+            #                         with tag("ul"):
+            #                             for key, value in row.items():
+            #                                 if key != "species":
+            #                                     with tag("li"):
+            #                                         text(f"{key}: {value}")
 
-                    with tag("ul"):
-                        for plant in plants:
-                            with tag("li"):
-                                text(plant["idTaxon"])
-
-                # Not resolved data list
-                with tag("h1"):
-                    text("Not resolved Data")
-
-                    # count of not resolved data
-                    num_items = len(project_data)  # Compter le nombre d'éléments
-                    with tag("p", klass="small-text"):
-                        text(f"{num_items} items not resolved")
-
-                    # list
-                    if not project_data.empty:
-                        with tag("ul"):
-                            for _, row in project_data.iterrows():
-                                with tag("li"):
-                                    with tag("strong"):
-                                        text(f"Sample Name: {row['species']}")
-                                    with tag("ul"):
-                                        for key, value in row.items():
-                                            if key != "species":
-                                                with tag("li"):
-                                                    text(f"{key}: {value}")
-
-                    else:
-                        with tag("p"):
-                            text("No suplementary data for this project.")
+            #         else:
+            #             with tag("p"):
+            #                 text("No suplementary data for this project.")
 
     return doc.getvalue()
-
-
-# Variable progress bar
-progress_values = [50, 30, 0]
-collected_values = [60, 30, 0]
-extracted_values = [40, 15, 0]
-profiled_values = [15, 5, 0]
 
 
 # Generate buttons with icons
