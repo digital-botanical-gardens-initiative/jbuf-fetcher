@@ -142,14 +142,31 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
             with tag("div", klass="details-container", id=f"details-{project}"), tag("h1"):
                 text(f"Additional details for project {project}:")
 
-            #     # Not resolved data list
-            #     with tag("h1"):
-            #         text("Not resolved Data")
+                # Not resolved data list
+                with tag("h1"):
+                    text(f"Not resolved Data for {project_name}")
 
-            #         # count of not resolved data
-            #         num_items = len(project_data)  # Compter le nombre d'éléments
-            #         with tag("p", klass="small-text"):
-            #             text(f"{num_items} items not resolved")
+                # Get the unresolved list
+                not_resolved_directus = report_data[project_name].get("not_resolved_directus", [])
+                not_resolved_botavista = report_data[project_name].get("not_resolved_botavista", [])
+
+                # List not_resolved_directus
+                if not_resolved_directus:
+                    with tag("h4"):
+                        text("Not Resolved Directus:")
+                    with tag("ul"):
+                        for item in not_resolved_directus:
+                            with tag("li"):
+                                text(item)
+
+                # List not_resolved_botavista
+                if not_resolved_botavista:
+                    with tag("h4"):
+                        text("Not Resolved Botavista:")
+                    with tag("ul"):
+                        for item in not_resolved_botavista:
+                            with tag("li"):
+                                text(item)
 
             #         # list
             #         if not project_data.empty:
