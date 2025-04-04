@@ -156,8 +156,9 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                         text("Not Resolved Directus:")
                     with tag("ul"):
                         for item in not_resolved_directus:
+                            print(item)
                             with tag("li"):
-                                text(item)
+                                text(str(item))
 
                 # List not_resolved_botavista
                 if not_resolved_botavista:
@@ -166,7 +167,7 @@ def generate_homepage(buttons: dict, data_path: str) -> str:
                     with tag("ul"):
                         for item in not_resolved_botavista:
                             with tag("li"):
-                                text(item)
+                                text(str(item))
 
             #         # list
             #         if not project_data.empty:
