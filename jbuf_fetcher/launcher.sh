@@ -70,6 +70,7 @@ if [[ "$MINUTE" == "30" && $((HOUR % 2)) -eq 0 ]]; then
     run_script "directus_fetcher"
     run_script "botavista_fetcher"
     run_script "taxo_resolver"
+    run_script "data_processing"
 fi
 
 # Update html
