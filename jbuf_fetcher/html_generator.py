@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Callable, cast
 
 from dotenv import load_dotenv
-from yattag import Doc
+from yattag import Doc, SimpleDoc
 
 load_dotenv()
 
@@ -16,6 +16,9 @@ def generate_homepage() -> None:
 
     # Make header
     create_html_header(tag, text)
+
+    # Allow expand/collapse behaviour
+    create_html_script(doc, tag)
 
     # Create buttons
     create_html_buttons(tag, text)
@@ -43,6 +46,17 @@ def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> 
             tag("link", rel="stylesheet", href="styles.css"),
         ):
             pass
+
+
+def create_html_script(doc: SimpleDoc, tag: Callable[..., Any]) -> None:
+    # Add JavaScript to manage display
+    with tag("script"):
+        doc.asis("""
+              function toggleDetails(project_name) {
+                  var detailsContainer = document.getElementById(project_name);
+                  detailsContainer.classList.toggle('open');
+              }
+          """)
 
 
 # Create services buttons with icons
@@ -167,55 +181,72 @@ def create_project_details(
     tag: Callable[..., Any], text: Callable[[str], None], project_name: str, project_data: dict[str, Any]
 ) -> None:
     # Details button
-    with tag("button", klass="details-button", onclick=f"toggleDetails({project_name})"):
+    with tag("button", klass="details-button", onclick=f"toggleDetails('details-{project_name}')"):
         text("Details")
 
     # Details section to be displayed when clicked
     with tag("div", klass="details-container", id=f"details-{project_name}"), tag("h1"):
-        text(f"Additional details for project {project_name}:")
+        # Add to collect list
+        create_to_collect_list(tag, text)
 
-        # Not resolved data list
-        with tag("h1"):
-            text(f"Not resolved Data for {project_name}")
-
-        # Get the unresolved list
+        # Get the unresolved lists
         not_resolved_directus = project_data.get("not_resolved_directus", [])
         not_resolved_botavista = project_data.get("not_resolved_botavista", [])
+        no_more_in_garden = project_data.get("no_more_in_garden", [])
 
-        # List not_resolved_directus
-        if not_resolved_directus:
-            with tag("h4"):
-                text("Not Resolved Directus:")
-            with tag("ul"):
-                for item in not_resolved_directus:
-                    with tag("li"):
-                        text(str(item))
+        # Add different lists
+        create_classical_list(
+            tag=tag, text=text, species_list=no_more_in_garden, list_name="Species collected but no more in the garden"
+        )
+        create_classical_list(
+            tag=tag, text=text, species_list=not_resolved_directus, list_name="Unresolved species present in Directus"
+        )
+        create_classical_list(
+            tag=tag, text=text, species_list=not_resolved_botavista, list_name="Unresolved species present in Botavista"
+        )
 
-        # List not_resolved_botavista
-        if not_resolved_botavista:
-            with tag("h4"):
-                text("Not Resolved Botavista:")
-            with tag("ul"):
-                for item in not_resolved_botavista:
-                    with tag("li"):
-                        text(str(item))
 
-    #         # list
-    #         if not project_data.empty:
-    #             with tag("ul"):
-    #                 for _, row in project_data.iterrows():
-    #                     with tag("li"):
-    #                         with tag("strong"):
-    #                             text(f"Sample Name: {row['species']}")
-    #                         with tag("ul"):
-    #                             for key, value in row.items():
-    #                                 if key != "species":
-    #                                     with tag("li"):
-    #                                         text(f"{key}: {value}")
+def create_classical_list(
+    tag: Callable[..., Any], text: Callable[[str], None], species_list: dict[str, Any], list_name: str
+) -> None:
+    print(species_list)
+    # Not resolved data list
+    with tag("h1"):
+        text(list_name)
 
-    #         else:
-    #             with tag("p"):
-    #                 text("No suplementary data for this project.")
+    # List not_resolved_directus
+    # if list:
+    #     with tag("h4"):
+    #         text("Not Resolved Directus:")
+    #     with tag("ul"):
+    #         for item in list:
+    #             with tag("li"):
+    #                 text(str(item))
+
+    # list
+
+
+#         if not project_data.empty:
+#             with tag("ul"):
+#                 for _, row in project_data.iterrows():
+#                     with tag("li"):
+#                         with tag("strong"):
+#                             text(f"Sample Name: {row['species']}")
+#                         with tag("ul"):
+#                             for key, value in row.items():
+#                                 if key != "species":
+#                                     with tag("li"):
+#                                         text(f"{key}: {value}")
+
+#         else:
+#             with tag("p"):
+#                 text("No suplementary data for this project.")
+
+
+def create_to_collect_list(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
+    # Not resolved data list
+    with tag("h1"):
+        text("Species to collect")
 
 
 def write_html_file(content: str) -> None:
