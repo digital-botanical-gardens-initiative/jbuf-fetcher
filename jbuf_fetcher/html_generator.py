@@ -192,27 +192,69 @@ def create_project_details(
         # Get the unresolved lists
         not_resolved_directus = project_data.get("not_resolved_directus", [])
         not_resolved_botavista = project_data.get("not_resolved_botavista", [])
-        no_more_in_garden = project_data.get("no_more_in_garden", [])
+        no_more_in_garden = project_data.get("no_more_in_garden_json", [])
 
         # Add different lists
         create_classical_list(
-            tag=tag, text=text, species_list=no_more_in_garden, list_name="Species collected but no more in the garden"
+            tag=tag,
+            text=text,
+            species_list=no_more_in_garden,
+            list_name="Species collected but no more in the garden",
+            main_key="resolved_species",
         )
         create_classical_list(
-            tag=tag, text=text, species_list=not_resolved_directus, list_name="Unresolved species present in Directus"
+            tag=tag,
+            text=text,
+            species_list=not_resolved_directus,
+            list_name="Unresolved species present in Directus",
+            main_key="species",
         )
         create_classical_list(
-            tag=tag, text=text, species_list=not_resolved_botavista, list_name="Unresolved species present in Botavista"
+            tag=tag,
+            text=text,
+            species_list=not_resolved_botavista,
+            list_name="Unresolved species present in Botavista",
+            main_key="species",
         )
 
 
 def create_classical_list(
-    tag: Callable[..., Any], text: Callable[[str], None], species_list: dict[str, Any], list_name: str
+    tag: Callable[..., Any],
+    text: Callable[[str], None],
+    species_list: dict[str, Any],
+    list_name: str,
+    main_key: str = "species",
 ) -> None:
-    print(species_list)
+    with tag("details"):
+        with tag("summary"):
+            text(list_name)
+        if species_list:
+            with tag("ul"):
+                for item in species_list:
+                    if isinstance(item, dict):
+                        with tag("li"):
+                            # Species name
+                            text(item.get(main_key, "Unknow species"))
+                            # Table with other infos
+                            with tag("table", klass="Info-table"):
+                                for key, value in item.items():
+                                    if key == main_key:
+                                        continue
+                                    with tag("tr"):
+                                        with tag("td"):
+                                            text(f"{key}:")
+                                        with tag("td"):
+                                            text(str(value))
+                    else:
+                        pass
+        else:
+            with tag("p"):
+                text("No species on this list")
+
+    # print(species_list)
     # Not resolved data list
-    with tag("h1"):
-        text(list_name)
+    # with tag("h1"):
+    #     text(list_name)
 
     # List not_resolved_directus
     # if list:
