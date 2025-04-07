@@ -243,10 +243,32 @@ body {
   background-color: #f9f9f9;
 }
 
-.summary {
+details summary {
   font-weight: bold;
   cursor: pointer;
-  font-size: 20px;
+  color: #333333;
+  font-size: 15px;
+}
+details[open] {
+  background-color: #e0e0e0;
+}
+
+/*infos tables*/
+.info-table {
+  width: 80%;
+  border-collapse: collapse;
+}
+.info-table td,
+.info-table th {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+}
+.info-table td {
+  text-align: left;
+}
+.info-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
 }
 
 /* ====================================
