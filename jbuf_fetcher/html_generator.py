@@ -226,7 +226,7 @@ def create_classical_list(
     main_key: str = "species",
 ) -> None:
     with tag("details"):
-        with tag("summary"):
+        with tag("summary", klass="summary-main"):
             text(list_name)
         if species_list:
             with tag("ul"):
@@ -256,7 +256,7 @@ def create_to_collect_list(
     tag: Callable[..., Any], text: Callable[[str], None], to_collect_list: list[dict[str, Any]]
 ) -> None:
     with tag("details"):
-        with tag("summary"):
+        with tag("summary", klass="summary-main"):
             text("Species to collect")
         with tag("div", klass="to-collect-plants-content"):
             # Sort plants by locations
@@ -268,9 +268,10 @@ def create_to_collect_list(
                     locations[location].append(plant)
             # Add a details section for each location
             for location, plants in locations.items():
+                plant_count = len(plants)
                 with tag("details"):
                     with tag("summary"):
-                        text(location)
+                        text(f"{location} ({plant_count} plants)")
                     with tag("ul"):
                         for plant in plants:
                             with tag("li"):
@@ -285,32 +286,6 @@ def create_to_collect_list(
                                                 text(f"{key}:")
                                             with tag("td"):
                                                 text(str(value))
-
-    # with tag("details"):
-    #     with tag("summary"):
-    #         text(list_name)
-    #     if to_collect_list:
-    #         with tag("ul"):
-    #             for item in to_collect_list:
-    #                 if isinstance(item, dict):
-    #                     with tag("li"):
-    #                         # Add species name
-    #                         text(item.get(main_key, "Unknown species"))
-    #                         # Add table with other infos
-    #                         with tag("table", klass="Info-table"):
-    #                             for key, value in item.items():
-    #                                 if key == main_key:
-    #                                     continue
-    #                                 with tag("tr"):
-    #                                     with tag("td"):
-    #                                         text(f"{key}:")
-    #                                     with tag("td"):
-    #                                         text(str(value))
-    #                 else:
-    #                     pass
-    # else:
-    #     with tag("p"):
-    #         text("No species on this list")
 
 
 def write_html_file(content: str) -> None:
