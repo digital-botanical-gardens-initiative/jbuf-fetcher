@@ -187,7 +187,7 @@ def create_project_details(
     # Details section to be displayed when clicked
     with tag("div", klass="details-container", id=f"details-{project_name}"), tag("h1"):
         # Add to collect list
-        create_to_collect_list(tag, text)
+        create_to_collect_list(tag, text, to_collect_list=project_data.get("to_collect_json", []))
 
         # Get the unresolved lists
         not_resolved_directus = project_data.get("not_resolved_directus", [])
@@ -251,44 +251,66 @@ def create_classical_list(
             with tag("p"):
                 text("No species on this list")
 
-    # print(species_list)
-    # Not resolved data list
-    # with tag("h1"):
-    #     text(list_name)
 
-    # List not_resolved_directus
-    # if list:
-    #     with tag("h4"):
-    #         text("Not Resolved Directus:")
-    #     with tag("ul"):
-    #         for item in list:
-    #             with tag("li"):
-    #                 text(str(item))
+def create_to_collect_list(
+    tag: Callable[..., Any], text: Callable[[str], None], to_collect_list: list[dict[str, Any]]
+) -> None:
+    with tag("details"):
+        with tag("summary"):
+            text("Species to collect")
+        with tag("div", klass="to-collect-plants-content"):
+            # Sort plants by locations
+            locations: dict[str, list[dict[str, Any]]] = {}
+            for plant in to_collect_list:
+                for location in plant.get("locations", []):
+                    if location not in locations:
+                        locations[location] = []
+                    locations[location].append(plant)
+            # Add a details section for each location
+            for location, plants in locations.items():
+                with tag("details"):
+                    with tag("summary"):
+                        text(location)
+                    with tag("ul"):
+                        for plant in plants:
+                            with tag("li"):
+                                text(plant.get("species", "Unknown species"))
+                                # Add other infos about the plant
+                                with tag("table", klass="Info-table"):
+                                    for key, value in plant.items():
+                                        if key == "species" or key == "locations":
+                                            continue
+                                        with tag("tr"):
+                                            with tag("td"):
+                                                text(f"{key}:")
+                                            with tag("td"):
+                                                text(str(value))
 
-    # list
-
-
-#         if not project_data.empty:
-#             with tag("ul"):
-#                 for _, row in project_data.iterrows():
-#                     with tag("li"):
-#                         with tag("strong"):
-#                             text(f"Sample Name: {row['species']}")
-#                         with tag("ul"):
-#                             for key, value in row.items():
-#                                 if key != "species":
-#                                     with tag("li"):
-#                                         text(f"{key}: {value}")
-
-#         else:
-#             with tag("p"):
-#                 text("No suplementary data for this project.")
-
-
-def create_to_collect_list(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
-    # Not resolved data list
-    with tag("h1"):
-        text("Species to collect")
+    # with tag("details"):
+    #     with tag("summary"):
+    #         text(list_name)
+    #     if to_collect_list:
+    #         with tag("ul"):
+    #             for item in to_collect_list:
+    #                 if isinstance(item, dict):
+    #                     with tag("li"):
+    #                         # Add species name
+    #                         text(item.get(main_key, "Unknown species"))
+    #                         # Add table with other infos
+    #                         with tag("table", klass="Info-table"):
+    #                             for key, value in item.items():
+    #                                 if key == main_key:
+    #                                     continue
+    #                                 with tag("tr"):
+    #                                     with tag("td"):
+    #                                         text(f"{key}:")
+    #                                     with tag("td"):
+    #                                         text(str(value))
+    #                 else:
+    #                     pass
+    # else:
+    #     with tag("p"):
+    #         text("No species on this list")
 
 
 def write_html_file(content: str) -> None:
