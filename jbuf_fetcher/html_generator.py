@@ -234,17 +234,33 @@ def create_classical_list(
                     if isinstance(item, dict):
                         with tag("li"):
                             # Species name
-                            text(item.get(main_key, "Unknow species"))
+                            with tag("span", klass="plant-name"):
+                                text(item.get(main_key, "Unknow species"))
                             # Table with other infos
-                            with tag("table", klass="Info-table"):
-                                for key, value in item.items():
-                                    if key == main_key:
-                                        continue
-                                    with tag("tr"):
-                                        with tag("td"):
-                                            text(f"{key}:")
+                            with tag("table", klass="flexible-layout-table"):
+                                # Create a single row for keys
+                                with tag("tr"):
+                                    for key in item:
+                                        if key == main_key:
+                                            continue
+                                        with tag("th"):
+                                            text(key)
+                                # Create a single row for values
+                                with tag("tr"):
+                                    for key, value in item.items():
+                                        if key == main_key:
+                                            continue
                                         with tag("td"):
                                             text(str(value))
+
+                                # for key, value in item.items():
+                                #     if key == main_key:
+                                #         continue
+                                #     with tag("tr"):
+                                #         with tag("td"):
+                                #             text(f"{key}:")
+                                #         with tag("td"):
+                                #             text(str(value))
                     else:
                         pass
         else:
@@ -277,7 +293,7 @@ def create_to_collect_list(
                             with tag("li"):
                                 text(plant.get("species", "Unknown species"))
                                 # Add other infos about the plant
-                                with tag("table", klass="Info-table"):
+                                with tag("table", klass="fixed-layout-table"):
                                     for key, value in plant.items():
                                         if key == "species" or key == "locations":
                                             continue

@@ -200,6 +200,13 @@ body {
 .legend-text {
   font-size: 14px;
 }
+/* Style for the plant name on the list */
+.plant-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  padding: 5px 0;
+}
 
 /* details */
 .details-container {
@@ -261,22 +268,43 @@ details[open] {
   background-color: #e0e0e0;
 }
 
-/*infos tables*/
-.info-table {
+/* Fixed layout for "species to collect" table */
+.fixed-layout-table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
-.info-table td,
-.info-table th {
+
+/* Flexible layout for "unresolved species" table */
+.flexible-layout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  table-layout: auto; /* Default flexible layout */
+}
+
+.fixed-layout-table td,
+.fixed-layout-table th,
+.flexible-layout-table td,
+.flexible-layout-table th {
   padding: 10px 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #666;
 }
-.info-table td {
-  text-align: left;
-}
-.info-table th {
+
+.fixed-layout-table th,
+.flexible-layout-table th {
   background-color: #f4f4f4;
   font-weight: bold;
+}
+
+/* Add hover effect for rows */
+.Info-table tr:hover {
+  background-color: #f1f1f1;
 }
 
 /* ====================================
