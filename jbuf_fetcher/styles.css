@@ -50,6 +50,7 @@ body {
    Styles for Specific Containers
    ==================================== */
 
+/* list container object style  */
 .list-container h2 {
   font-size: 10px;
   font-weight: bold;
@@ -121,6 +122,11 @@ body {
 }
 .button:hover {
   background: #94a58c;
+  transform: scale(1.05); /* Slightly increase the size */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Add a shadow */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease; /* Smooth transition */
 }
 
 /* Icon Styling */
@@ -138,6 +144,7 @@ body {
   text-align: left;
 }
 
+/* Progress bar */
 .progress-container {
   width: 100%;
   height: 30px;
@@ -240,8 +247,14 @@ body {
 
 .details-button:hover {
   background-color: #94a58c;
+  transform: scale(1.05); /* Slightly increase the size */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4); /* Add a shadow */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease; /* Smooth transition */
 }
 
+/* Display lists */
 .details {
   margin-bottom: 10px;
   border: 1px solid #ccc;
@@ -268,8 +281,16 @@ details summary {
   background-color: #aabea1;
 }
 
+/* Styles for the second list when it is displayed (Locations) */
 details[open] {
   background-color: #f1f1f1;
+  margin-bottom: 10px;
+}
+
+details[open] details summary {
+  text-align: left;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 
 details[open] details summary:hover {
@@ -293,7 +314,7 @@ details[open] details summary:hover {
   font-size: 14px;
   margin-top: 10px;
   margin-bottom: 10px;
-  table-layout: auto; /* Default flexible layout */
+  table-layout: auto;
 }
 
 .fixed-layout-table td,
