@@ -135,23 +135,6 @@ def load_project_mappings() -> dict[str, str]:
     data_path = os.getenv("DATA_PATH", "")
     mappings_file = os.path.join(data_path, "project_mappings.json")
 
-    # Check if the file exists
-    if not os.path.exists(mappings_file):
-        print(f"The mappings file '{mappings_file}' does not exist. Creating it now...")
-        # Default dictionary to populate the file
-        default_mappings = {
-            "jbuf": "Jardin Botanique de l'Université de Fribourg",
-            "jbn": "Jardin Botanique de Neuchâtel",
-            "jbg": "Jardin Botanique de Genève",
-        }
-        # Ensure the data folder exists
-        os.makedirs(data_path, exist_ok=True)
-        # Write the default dictionary to the file
-        with open(mappings_file, "w", encoding="utf-8") as file:
-            json.dump(default_mappings, file, indent=4)
-        print(f"Default mappings file created at '{mappings_file}'.")
-        return default_mappings
-
     # Load the JSON file
     try:
         with open(mappings_file, encoding="utf-8") as file:
