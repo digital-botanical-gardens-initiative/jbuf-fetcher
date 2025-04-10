@@ -129,10 +129,32 @@ def create_html_project_container(
         create_project_details(tag, text, project_name, project_data)
 
 
+# Load dictonary for project name
+def load_project_mappings() -> dict[str, str]:
+    # Path to the JSON file
+    mappings_file = os.path.join(os.getenv("DATA_PATH", ""), "project_mappings.json")
+
+    # Load the JSON file
+    try:
+        with open(mappings_file, encoding="utf-8") as file:
+            return cast(dict[str, str], json.load(file))
+    except FileNotFoundError:
+        print(f"Error: The mappings file '{mappings_file}' does not exist.")
+        exit()
+    except json.JSONDecodeError:
+        print(f"Error: Unable to decode JSON file '{mappings_file}'.")
+        exit()
+
+
 def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], project_name: str) -> None:
+    # Load project mappings
+    project_mappings = load_project_mappings()
+    print(project_mappings)
+    # Get the project name from the mapping
+    full_title = project_mappings.get(project_name, project_name)
     # Put title
     with tag("h2"):
-        text(f"Collection status for {project_name}")
+        text(f"Collection status for {full_title}")
 
     # Put update date
     with tag("p", klass="small-text"):
@@ -185,7 +207,7 @@ def create_project_details(
         text("Details")
 
     # Details section to be displayed when clicked
-    with tag("div", klass="details-container", id=f"details-{project_name}"), tag("h1"):
+    with tag("div", klass="list-container", id=f"details-{project_name}"), tag("h1"):
         # Add to collect list
         create_to_collect_list(tag, text, to_collect_list=project_data.get("to_collect_json", []))
 

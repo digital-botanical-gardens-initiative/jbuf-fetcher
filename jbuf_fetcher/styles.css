@@ -50,26 +50,26 @@ body {
    Styles for Specific Containers
    ==================================== */
 
-.details-container h2 {
+.list-container h2 {
   font-size: 10px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.details-container h3 {
+.list-container h3 {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 15px;
 }
 
-.details-container ul {
+.list-container ul {
   font-size: 15px;
   margin-bottom: 15px;
   text-align: left;
   margin-left: 10px;
 }
 
-.details-container li {
+.list-container li {
   font-size: 15px;
   margin-bottom: 15px;
   text-align: justify;
@@ -209,7 +209,7 @@ body {
 }
 
 /* details */
-.details-container {
+.list-container {
   font-size: 14px;
   display: none;
   margin-top: 10px;
@@ -221,7 +221,7 @@ body {
   line-height: 1.7;
 }
 
-.details-container.open {
+.list-container.open {
   display: block;
   height: auto;
   transition: all 0.3s ease-in-out;
@@ -264,8 +264,16 @@ details summary {
   font-size: 15px;
 }
 
+.summary-main:hover {
+  background-color: #aabea1;
+}
+
 details[open] {
-  background-color: #e0e0e0;
+  background-color: #f1f1f1;
+}
+
+details[open] details summary:hover {
+  background-color: #aabea1;
 }
 
 /* Fixed layout for "species to collect" table */
@@ -303,8 +311,9 @@ details[open] {
 }
 
 /* Add hover effect for rows */
-.Info-table tr:hover {
-  background-color: #f1f1f1;
+.fixed-layout-table tr:hover,
+.flexible-layout-table tr:hover {
+  background-color: #dddcdc;
 }
 
 /* ====================================
