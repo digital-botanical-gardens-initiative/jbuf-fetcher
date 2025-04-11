@@ -123,10 +123,22 @@ body {
 .button:hover {
   background: #94a58c;
   transform: scale(1.05); /* Slightly increase the size */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Add a shadow */
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease; /* Smooth transition */
+}
+
+/* Button shadow for hover effect for each service */
+.button.directus:hover {
+  box-shadow: 0 6px 12px rgba(111, 78, 255, 0.4); /* violet */
+}
+
+.button.nextcloud:hover {
+  box-shadow: 0 6px 12px rgba(13, 150, 225, 0.4); /* bleu */
+}
+
+.button.qfieldcloud:hover {
+  box-shadow: 0 6px 12px rgba(75, 111, 173, 0.4); /* turquoise */
 }
 
 /* Icon Styling */

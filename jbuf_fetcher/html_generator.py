@@ -63,11 +63,22 @@ def create_html_script(doc: SimpleDoc, tag: Callable[..., Any]) -> None:
 def create_html_buttons(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     # Construct buttons with icons
     buttons = {
-        "Directus": {"url": "https://emi-collection.unifr.ch/directus", "icon": "images/directus.png"},
-        "NextCloud": {"url": "https://emi-collection.unifr.ch/nextcloud", "icon": "images/nextcloud.png"},
-        "QFieldCloud": {"url": "https://emi-collection.unifr.ch/qfieldcloud", "icon": "images/qfieldcloud.png"},
+        "Directus": {
+            "url": "https://emi-collection.unifr.ch/directus",
+            "icon": "images/directus.png",
+            "css_classes": "directus",
+        },
+        "NextCloud": {
+            "url": "https://emi-collection.unifr.ch/nextcloud",
+            "icon": "images/nextcloud.png",
+            "css_classes": "nextcloud",
+        },
+        "QFieldCloud": {
+            "url": "https://emi-collection.unifr.ch/qfieldcloud",
+            "icon": "images/qfieldcloud.png",
+            "css_classes": "qfieldcloud",
+        },
     }
-
     # Button container
     with tag("body"), tag("div", klass="container"):
         with tag("h1"):
@@ -75,7 +86,11 @@ def create_html_buttons(tag: Callable[..., Any], text: Callable[[str], None]) ->
 
         with tag("div", klass="button-container"):
             for button_name, attributes in buttons.items():
-                with tag("a", klass="button", href=attributes["url"]):
+                css_class = attributes.get("css_classes", "")
+                combined_class = f"button {css_class}"
+                print(f"Creating button with class: {combined_class}")  # Debug
+
+                with tag("a", klass=combined_class, href=attributes["url"]):
                     with tag("img", src=attributes["icon"]):
                         pass
                     text(button_name)
