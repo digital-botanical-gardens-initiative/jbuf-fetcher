@@ -1,9 +1,9 @@
 import json
 import os
+from typing import cast
 
 import requests
 from dotenv import load_dotenv
-from typing import cast
 
 load_dotenv()
 
@@ -28,8 +28,9 @@ load_dotenv()
 #     print("No project found in .env")
 #     exit()
 
+
 # Load project mappings from project_mappings.json
-def load_project_mappings() -> dict[str, str]:
+def load_project_mappings() -> dict[str, dict[str, str]]:
     # Path to the JSON file
     data_path = os.getenv("DATA_PATH", "")
     mappings_file = os.path.join(data_path, "project_mappings.json")
@@ -54,7 +55,6 @@ def load_project_mappings() -> dict[str, str]:
         exit()
 
 
-
 # Load the project dictionary
 project_dict = load_project_mappings()
 
@@ -74,7 +74,7 @@ session = requests.Session()
 json_file = []
 
 # Loop over projects
-for project_name, code in botavista_codes.items():
+for _project_name, code in botavista_codes.items():
     # Construct url
     url = f"https://botavista.com/api/cultivated/search/{code}?query=s"
     response = session.get(url)
@@ -92,7 +92,9 @@ for project_name, code in botavista_codes.items():
                         locations.append(location)
                     element = {
                         "species": sci_name,
-                        "qfield_project": next((k for k, v in project_dict.items() if v == code), None),
+                        "qfield_project": next(
+                            (k for k, v in project_dict.items() if v["botavista_code"] == code), None
+                        ),
                         "locations": locations,
                     }
                     json_file.append(element)

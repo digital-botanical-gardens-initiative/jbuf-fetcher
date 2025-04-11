@@ -130,7 +130,7 @@ def create_html_project_container(
 
 
 # Load dictonary for project name
-def load_project_mappings() -> dict[str, str]:
+def load_project_mappings() -> dict[str, dict[str, str]]:
     # Path to the JSON file
     data_path = os.getenv("DATA_PATH", "")
     mappings_file = os.path.join(data_path, "project_mappings.json")
@@ -152,10 +152,11 @@ def load_project_mappings() -> dict[str, str]:
 
 def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], project_name: str) -> None:
     # Load project mappings
-    project_mappings = load_project_mappings()
-    
-        # Get the garden name for the project
+    project_mappings: dict[str, dict[str, str]] = load_project_mappings()
+
+    # Get the garden name for the project
     garden_name = project_mappings.get(project_name, {}).get("garden_name", project_name)
+
     # Put title
     with tag("h2"):
         text(f"Collection status for {garden_name}")
