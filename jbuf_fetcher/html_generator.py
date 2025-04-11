@@ -138,7 +138,13 @@ def load_project_mappings() -> dict[str, str]:
     # Load the JSON file
     try:
         with open(mappings_file, encoding="utf-8") as file:
-            return cast(dict[str, str], json.load(file))
+            # Load the entire JSON structure
+            data = json.load(file)
+            # Ensure the data is a dictionary with the expected structure
+            return cast(dict[str, dict[str, str]], data)
+    except FileNotFoundError:
+        print(f"Error: The mappings file '{mappings_file}' does not exist.")
+        exit()
     except json.JSONDecodeError:
         print(f"Error: Unable to decode JSON file '{mappings_file}'.")
         exit()
@@ -147,12 +153,12 @@ def load_project_mappings() -> dict[str, str]:
 def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], project_name: str) -> None:
     # Load project mappings
     project_mappings = load_project_mappings()
-    print(project_mappings)
-    # Get the project name from the mapping
-    full_title = project_mappings.get(project_name, project_name)
+    
+        # Get the garden name for the project
+    garden_name = project_mappings.get(project_name, {}).get("garden_name", project_name)
     # Put title
     with tag("h2"):
-        text(f"Collection status for {full_title}")
+        text(f"Collection status for {garden_name}")
 
     # Put update date
     with tag("p", klass="small-text"):
@@ -273,14 +279,6 @@ def create_classical_list(
                                         with tag("td"):
                                             text(str(value))
 
-                                # for key, value in item.items():
-                                #     if key == main_key:
-                                #         continue
-                                #     with tag("tr"):
-                                #         with tag("td"):
-                                #             text(f"{key}:")
-                                #         with tag("td"):
-                                #             text(str(value))
                     else:
                         pass
         else:

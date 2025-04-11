@@ -1,6 +1,18 @@
 {
-    "jbuf": "Jardin Botanique de l'Université de Fribourg",
-    "jbn": "Jardin Botanique de Neuchâtel",
-    "jbg": "Jardin Botanique de Genève",
-    "jbp": "Jardin Botanique de Paris"
+    "jbuf": {
+        "garden_name": "Jardin Botanique de l'Université de Fribourg", 
+        "botavista_code":"fribg"
+    },
+    "jbn": {
+        "garden_name": "Jardin Botanique de Neuchâtel",
+        "botavista_code":"neuchg"
+    },
+    "jbg": {
+        "garden_name": "Jardin Botanique de Genève",
+        "botavista_code":"g"
+    },
+    "jbp": {
+        "garden_name": "Jardin Botanique de Paris",
+        "botavista_code":"p"
+    }
 }
