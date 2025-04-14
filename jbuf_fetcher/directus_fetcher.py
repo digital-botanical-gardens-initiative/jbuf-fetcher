@@ -5,7 +5,12 @@ import re
 import requests
 from dotenv import load_dotenv
 
+from jbuf_fetcher import utils
+
 load_dotenv()
+
+# Extract qfiled codes
+qfield_codes = utils.get_qfield_codes
 
 # Define session
 session = requests.Session()
@@ -13,33 +18,13 @@ session = requests.Session()
 # Directus url
 base_url = "https://emi-collection.unifr.ch/directus"
 
-project_dict_str = os.getenv("PROJECT")
-
-if not project_dict_str:
-    print("Error : variable PROJECT not specified in .env")
-    exit()
-
-try:
-    # Convert JSON to python dictionary
-    project_dict = json.loads(project_dict_str)
-except json.JSONDecodeError:
-    print("Error: PROJECT variable in .env is not a valid JSON")
-    exit()
-
-# Extract only the key (project name)
-project_names = list(project_dict.keys())
-
-# Check if there are some projects
-if not project_names:
-    print("No project found in .env")
-    exit()
-
 
 def get_data() -> None:
     # Make directus request
     field_name = "qfield_project"
-    collection_url = base_url + "/items/Field_Data"
+    project_names = utils.get_qfield_codes()
     projects_filter = ",".join(project_names)
+    collection_url = base_url + "/items/Field_Data"
     request_url = (
         collection_url
         + f"?filter[{field_name}][_in]={projects_filter}&&limit=-1&fields=sample_id,sample_name,taxon_name,name_proposition,qfield_project"

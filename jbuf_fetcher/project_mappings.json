@@ -1,18 +1,22 @@
-{
-    "jbuf": {
+[
+    {
+        "qfield_code": "jbuf",
         "garden_name": "Jardin Botanique de l'Université de Fribourg",
         "botavista_code": "fribg"
     },
-    "jbn": {
+    {
+        "qfield_code": "jbn",
         "garden_name": "Jardin Botanique de Neuchâtel",
-        "botavista_code": "neuchg"
+        "botavista_code": "neuch"
     },
-    "jbg": {
+    {
+        "qfield_code": "jbg",
         "garden_name": "Jardin Botanique de Genève",
         "botavista_code": "g"
     },
-    "jbp": {
+    {
+        "qfield_code": "jbp",
         "garden_name": "Jardin Botanique de Paris",
         "botavista_code": "p"
     }
-}
+]

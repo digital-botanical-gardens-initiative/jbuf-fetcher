@@ -6,6 +6,8 @@ from typing import Any, Callable, cast
 from dotenv import load_dotenv
 from yattag import Doc, SimpleDoc
 
+from jbuf_fetcher import utils
+
 load_dotenv()
 
 
@@ -88,7 +90,6 @@ def create_html_buttons(tag: Callable[..., Any], text: Callable[[str], None]) ->
             for button_name, attributes in buttons.items():
                 css_class = attributes.get("css_classes", "")
                 combined_class = f"button {css_class}"
-                print(f"Creating button with class: {combined_class}")  # Debug
 
                 with tag("a", klass=combined_class, href=attributes["url"]):
                     with tag("img", src=attributes["icon"]):
@@ -116,12 +117,12 @@ def load_json_report() -> dict[str, Any]:
         exit()
 
 
-# Generate projects
 def create_html_projects(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     # Get report
     report_data = load_json_report()
 
     # Create containers for projects
+
     for project_name, project_data in report_data.items():
         # Construct each project
         create_html_project_container(tag, text, project_name, project_data)
@@ -134,45 +135,18 @@ def create_html_project_container(
     # Create a container for each project
     with tag("div", klass="container"):
         # Create header
-        create_project_header(tag, text, project_name)
+        garden_name = utils.get_garden_names_from_qfield_code(project_name)
+        create_project_header(tag, text, garden_name)
 
         # Create progressbar
         percentages = project_data.get("percentages", {})
         create_project_progressbar(tag, text, percentages)
 
         # Create details
-        create_project_details(tag, text, project_name, project_data)
+        create_project_details(tag, text, project_data, project_name)
 
 
-# Load dictonary for project name
-def load_project_mappings() -> dict[str, dict[str, str]]:
-    # Path to the JSON file
-    data_path = os.getenv("DATA_PATH", "")
-    mappings_file = os.path.join(data_path, "project_mappings.json")
-
-    # Load the JSON file
-    try:
-        with open(mappings_file, encoding="utf-8") as file:
-            # Load the entire JSON structure
-            data = json.load(file)
-            # Ensure the data is a dictionary with the expected structure
-            return cast(dict[str, dict[str, str]], data)
-    except FileNotFoundError:
-        print(f"Error: The mappings file '{mappings_file}' does not exist.")
-        exit()
-    except json.JSONDecodeError:
-        print(f"Error: Unable to decode JSON file '{mappings_file}'.")
-        exit()
-
-
-def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], project_name: str) -> None:
-    # Load project mappings
-    project_mappings: dict[str, dict[str, str]] = load_project_mappings()
-
-    # Get the garden name for the project
-    garden_name = project_mappings.get(project_name, {}).get("garden_name", project_name)
-
-    # Put title
+def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], garden_name: str) -> None:
     with tag("h2"):
         text(f"Collection status for {garden_name}")
 
@@ -220,7 +194,7 @@ def create_project_progressbar(
 
 
 def create_project_details(
-    tag: Callable[..., Any], text: Callable[[str], None], project_name: str, project_data: dict[str, Any]
+    tag: Callable[..., Any], text: Callable[[str], None], project_data: dict[str, Any], project_name: str
 ) -> None:
     # Details button
     with tag("button", klass="details-button", onclick=f"toggleDetails('details-{project_name}')"):
@@ -346,7 +320,7 @@ def write_html_file(content: str) -> None:
     html_file = os.path.join(html_folder, "home_page.html")
 
     # Create file
-    with open(html_file, "w") as file:
+    with open(html_file, "w", encoding="utf-8") as file:
         file.write(content)
 
     print("Responsive HTML file generated successfully!")

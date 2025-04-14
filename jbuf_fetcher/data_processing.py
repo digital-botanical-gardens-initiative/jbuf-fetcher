@@ -5,6 +5,8 @@ from typing import Any
 import pandas as pd
 from dotenv import load_dotenv
 
+from jbuf_fetcher import utils
+
 load_dotenv()
 
 # Get the data lists
@@ -12,8 +14,10 @@ data_folder = os.getenv("DATA_PATH") or ""
 file_path_directus = os.path.join(data_folder, "resolved_data_directus.json")
 file_path_botavista = os.path.join(data_folder, "resolved_data_botavista.json")
 
-# Get projects from .env
-projects_dict = json.loads(str(os.getenv("PROJECT")))
+# Get the project mappings
+garden_name = utils.get_garden_names()
+botavista_code = utils.get_botavista_codes()
+qfield_code = utils.get_qfield_codes()
 
 
 # Function to load JSON data into a DataFrame
@@ -37,7 +41,7 @@ def create_report(df_botavista: pd.DataFrame, df_directus: pd.DataFrame) -> None
     report = {}
 
     # Get projects list
-    projects = projects_dict.keys()
+    projects = utils.get_qfield_codes()
 
     # Create the global report
     for project in projects:  # Loop through each project
