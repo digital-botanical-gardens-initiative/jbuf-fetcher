@@ -24,6 +24,7 @@ mkdir -p $HTML_PATH
 mkdir -p $LOGS_PATH
 
 cp "./jbuf_fetcher/styles.css" "${HTML_PATH}/styles.css"
+cp "./jbuf_fetcher/scripts.js" "${HTML_PATH}/scripts.js"
 cp "./jbuf_fetcher/project_mappings.json" "${DATA_PATH}/project_mappings.json"
 cp -r "./images" "${HTML_PATH}"
 

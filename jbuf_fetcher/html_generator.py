@@ -4,9 +4,12 @@ from datetime import datetime
 from typing import Any, Callable, cast
 
 from dotenv import load_dotenv
-from yattag import Doc, SimpleDoc
+from yattag import Doc
 
 from jbuf_fetcher import utils
+
+doc, tag, text = Doc().tagtext()
+
 
 load_dotenv()
 
@@ -19,14 +22,14 @@ def generate_homepage() -> None:
     # Make header
     create_html_header(tag, text)
 
-    # Allow expand/collapse behaviour
-    create_html_script(doc, tag)
-
     # Create buttons
     create_html_buttons(tag, text)
 
     # Add projects
     create_html_projects(tag, text)
+
+    # Allow expand/collapse behaviour
+    create_html_script(tag)
 
     # Write the HTML file
     write_html_file(doc.getvalue())
@@ -50,15 +53,9 @@ def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> 
             pass
 
 
-def create_html_script(doc: SimpleDoc, tag: Callable[..., Any]) -> None:
-    # Add JavaScript to manage display
-    with tag("script"):
-        doc.asis("""
-              function toggleDetails(project_name) {
-                  var detailsContainer = document.getElementById(project_name);
-                  detailsContainer.classList.toggle('open');
-              }
-          """)
+def create_html_script(tag: Callable[..., Any]) -> None:
+    with tag("script", src="scripts.js"):
+        pass
 
 
 # Create services buttons with icons
@@ -279,7 +276,7 @@ def create_classical_list(
 def create_to_collect_list(
     tag: Callable[..., Any], text: Callable[[str], None], to_collect_list: list[dict[str, Any]]
 ) -> None:
-    with tag("details"):
+    with tag("details", klass="main-details"):
         with tag("summary", klass="summary-main"):
             text("Species to collect")
         with tag("div", klass="to-collect-plants-content"):

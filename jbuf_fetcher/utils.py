@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 
 # Load dictonary for project name
 def load_project_mappings() -> list[dict[str, str]]:
@@ -39,9 +40,8 @@ def get_qfield_codes() -> list[str]:
             exit()
 
         qfield_codes.append(code)
-    
-    return qfield_codes
 
+    return qfield_codes
 
 
 def get_botavista_codes() -> list[str]:
@@ -50,13 +50,13 @@ def get_botavista_codes() -> list[str]:
 
     botavista_codes: list[str] = []
 
-    for project in projects: 
+    for project in projects:
         code = project.get("botavista_code", None)
         if code is None:
             print(f"Error: Missing botavista code in {project}.")
             exit()
         botavista_codes.append(code)
-        
+
     return botavista_codes
 
 
@@ -66,15 +66,16 @@ def get_garden_names() -> list[str]:
 
     garden_names: list[str] = []
 
-    for project in projects: 
-        name = project.get("garden_name", None) 
+    for project in projects:
+        name = project.get("garden_name", None)
         if name is None:
             print(f"Error: Missing garden name in {project}.")
             exit()
-            
+
         garden_names.append(name)
-    
+
     return garden_names
+
 
 def get_qfield_code_from_botavista_code(botavista_code: str) -> str:
     # Load project mappings
@@ -83,9 +84,10 @@ def get_qfield_code_from_botavista_code(botavista_code: str) -> str:
     for project in projects:
         if project["botavista_code"] == botavista_code:
             return project["qfield_code"]
-        
+
     print(f"Error: Botavista code {botavista_code} not found in project mappings.")
     exit()
+
 
 def get_garden_names_from_qfield_code(qfield_code: str) -> str:
     # Load project mappings
