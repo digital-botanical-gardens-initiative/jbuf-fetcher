@@ -38,6 +38,7 @@ def generate_homepage() -> None:
 # Create the HTML header
 def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     with tag("html"), tag("head"):
+        doc.stag("meta", charset="UTF-8")
         with tag("title"):
             text("Home")
         with (
