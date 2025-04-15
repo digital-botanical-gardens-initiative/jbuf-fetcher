@@ -25,35 +25,26 @@ session = requests.Session()
 url = "https://finder.globalnames.org/api/v1/find"
 
 
-def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
-    """Resolve scientific name and return modified JSON object."""
-    # Get name and replace underscores by white spaces
-    raw_name = str(obj.get("species", "")).replace("_", " ")
-
-    # Remove all non alphabetical characters
-    alphabetical_name = re.sub(r"[^a-zA-Z ]", "", raw_name).strip()
-
-    # Remove multiple spaces
-    unspaced_name = re.sub(r"\s+", " ", alphabetical_name).strip()
-
-    # Remove first part if shorter than 3 characters
-    words = unspaced_name.split(" ")
-    if words and len(words[0]) < 3:
+def clean_species_name(raw_name: str) -> str:
+    # Clean and format the species name
+    name = raw_name.replace("_", " ")  # Get name and replace underscores by white spaces
+    name = re.sub(r"[^a-zA-Z ]", "", name).strip()  # Remove all non alphabetical characters
+    name = re.sub(r"\s+", " ", name)  # Remove multiple spaces
+    words = name.split(" ")
+    if words and len(words[0]) < 3:  # Remove first part if shorter than 3 characters
         words.pop(0)
-    unprefixed_name = " ".join(words)
+    return " ".join(words).capitalize()
 
-    # Capitalize name
-    cleaned_name = str(unprefixed_name).capitalize()
 
-    # Skip unknown or malformed names
-    if cleaned_name in ["None", "Aaunknown", "Unknown"] or len(cleaned_name.split(" ")) < 2:
-        obj["submitted_name"] = cleaned_name
-        obj["resolution_error"] = "Excluded"
-        return obj, False
+def is_excluadable_name(name: str) -> bool:
+    # Check if the name should be excluded from resolution (skip unknow or malformed names)
+    return name in ["None", "Aaunknown", "Unknown"] or len(name.split(" ")) < 2
 
-    # Build json request
-    payload = {
-        "text": cleaned_name,
+
+def build_payload(name: str) -> dict[str, Any]:
+    # Create the payload for the resolution API
+    return {
+        "text": name,
         "format": "json",
         "bytesOffset": False,
         "returnContent": True,
@@ -68,56 +59,54 @@ def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         "allMatches": True,
     }
 
-    # Make request
+
+def parse_resolution_response(name: str, resp_json: dict[str, Any], obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+    # Interpret the API response and update the object accordingly
+    try:
+        verification = resp_json["names"][0]["verification"]
+        if not verification.get("bestResult"):
+            matched_name = verification.get("name")
+            obj.update({
+                "submitted_name": name,
+                "resolution_confidence": "low",
+                "resolved_species": matched_name,
+            })
+            return obj, True
+        else:
+            best_result = verification["bestResult"]
+            matched_name = best_result.get("currentCanonicalSimple") or best_result.get("matchedCanonicalSimple")
+            confidence = "high" if best_result.get("currentCanonicalSimple") else "medium"
+            obj.update({
+                "submitted_name": name,
+                "resolution_confidence": confidence,
+                "resolved_species": matched_name,
+            })
+            return obj, True
+    except Exception as e:
+        obj["submitted_name"] = name
+        obj["resolution_error"] = f"Error: Couldn't extract result - {e} - Response: {resp_json}"
+        return obj, False
+
+
+def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+    # Resolve scientific name and return modified JSON object.
+    raw_name = str(obj.get("species", ""))
+    cleaned_name = clean_species_name(raw_name)
+
+    if is_excluadable_name(cleaned_name):
+        obj["submitted_name"] = cleaned_name
+        obj["resolution_error"] = "Excluded"
+        return obj, False
+
+    payload = build_payload(cleaned_name)
+
     try:
         response = session.post(url, json=payload)
-        # Check for valid response
         if response.status_code == 200:
-            # Store json response
-            json_resp = response.json()
-            # Check that needed data exist in the json
-            try:
-                # If bestResult is not present
-                if (
-                    json_resp.get("names")
-                    and json_resp["names"]
-                    and json_resp["names"][0].get("verification")
-                    and not json_resp["names"][0]["verification"].get("bestResult")
-                ):
-                    verification = json_resp["names"][0]["verification"]
-                    matched_name = verification.get("name")
-                    obj["submitted_name"] = cleaned_name
-                    obj["resolution_confidence"] = "low"
-                    obj["resolved_species"] = matched_name
-                    return obj, True
-                # If bestResult is present
-                elif (
-                    json_resp["names"]
-                    and json_resp["names"][0]["verification"]
-                    and json_resp["names"][0]["verification"]["bestResult"]
-                ):
-                    best_result = json_resp["names"][0]["verification"]["bestResult"]
-                    if best_result.get("currentCanonicalSimple"):
-                        matched_name = best_result.get("currentCanonicalSimple")
-                        confidence = "high"
-                    else:
-                        matched_name = best_result.get("matchedCanonicalSimple")
-                        confidence = "medium"
-                    obj["submitted_name"] = cleaned_name
-                    obj["resolution_confidence"] = confidence
-                    obj["resolved_species"] = matched_name
-                    return obj, True
-                else:
-                    obj["submitted_name"] = cleaned_name
-                    obj["resolution_error"] = f"Error: names or verification doesn't exist - Response: {json_resp}"
-                    return obj, False
-            except Exception as e:
-                obj["submitted_name"] = cleaned_name
-                obj["resolution_error"] = f"Error: Couldn't extract result - {e} - Response: {json_resp}"
-                return obj, False
+            return parse_resolution_response(cleaned_name, response.json(), obj)
         else:
             obj["submitted_name"] = cleaned_name
-            obj["resolution_error"] = f"Error: Bad response - Code: {response.status_code} - Message: {response.text}"
+            obj["resolution_error"] = f"Error: Bad - Code: {response.status_code} - Message: {response.text}"
             return obj, False
     except requests.RequestException as e:
         obj["submitted_name"] = cleaned_name
@@ -125,23 +114,42 @@ def resolve_name(obj: dict[str, Any]) -> tuple[dict[str, Any], bool]:
         return obj, False
 
 
-def batch_run(data: dict, collection: str) -> None:
+def batch_run(data: dict, collection: str, max_retries: int = 5) -> None:
     # Parallel processing using ThreadPoolExecutor
     resolved_results = []
     error_results = []
     excluded_results = []
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        resolved_data = {executor.submit(resolve_name, obj): obj for obj in data}
-        for resolved_obj in as_completed(resolved_data):
-            result, success = resolved_obj.result()
-            if success:
-                resolved_results.append(result)
-            else:
-                if result.get("resolution_error", "") == "Excluded":
-                    excluded_results.append(result)
-                else:
-                    error_results.append(result)
+    to_retry = [{"obj": obj, "retries": 0} for obj in data]
+
+    while to_retry:
+        next_round = []
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            future_to_data = {executor.submit(resolve_name, item["obj"]): item for item in to_retry}
+
+            for future in as_completed(future_to_data):
+                item = future_to_data[future]
+
+                try:
+                    result, success = future.result()
+                    resolution_error = result.get("resolution_error", "")
+                    if resolution_error == "Excluded":
+                        excluded_results.append(result)
+                        continue
+
+                    if success:
+                        resolved_results.append(result)
+                    else:
+                        if item["retries"] + 1 < max_retries:
+                            next_round.append({"obj": result, "retries": item["retries"] + 1})
+                        else:
+                            error_results.append(result)
+                except Exception as e:
+                    item["obj"]["resolution_error"] = f"Unexpected Error during retry: {e}"
+                    error_results.append(item["obj"])
+
+        to_retry = next_round
 
     data_file = os.path.join(data_path, f"resolved_data_{collection}.json")
     error_file = os.path.join(data_path, f"not_resolved_data_{collection}.json")
