@@ -29,7 +29,7 @@ cp "./jbuf_fetcher/project_mappings.json" "${DATA_PATH}/project_mappings.json"
 cp -r "./images" "${HTML_PATH}"
 
 # Clean logs folder if the used space is greater than 100MB
-SIZE_LIMIT_MB=15
+SIZE_LIMIT_MB=5
 
 # Get the folder size in MB
 FOLDER_SIZE_MB=$(du -sm "$LOGS_PATH" | awk '{print $1}')
