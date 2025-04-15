@@ -1,6 +1,16 @@
 function toggleDetails(project_name) {
   var detailsContainer = document.getElementById(project_name);
-  detailsContainer.classList.toggle("open");
+
+  // toggle visibility
+  const isNowOpen = detailsContainer.classList.toggle("open");
+
+  if (!isNowOpen) {
+    // If we close the block, all <details> get closed
+    const nestedDetails = detailsContainer.querySelectorAll("details");
+    nestedDetails.forEach((d) => {
+      d.removeAttribute("open");
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -19,32 +29,33 @@ document.addEventListener("DOMContentLoaded", function () {
             detail.removeAttribute("open");
           }
         });
-
-        // Do not close nested details in the same group
-        const nestedInThisDetail = targetDetail.querySelectorAll("details");
-        nestedInThisDetail.forEach((nestedDetail) => {
-          nestedDetail.setAttribute("open", "true"); // Leave nested groups open
+      } else {
+        // if MainDetail is closed, close all nested details
+        const nestedDetails = targetDetail.querySelectorAll("details");
+        nestedDetails.forEach((nestedDetail) => {
+          nestedDetail.removeAttribute("open");
+          nestedDetail.open = false;
         });
       }
     });
   });
-
   // Close all nested <details> on startup
   allNestedDetails.forEach((detail) => {
     detail.removeAttribute("open");
-    detail.open = false; // <-- Forcer fermeture
+    detail.open = false;
   });
 
   // Add a listener to manage single opening behavior
   allNestedDetails.forEach((targetDetail) => {
-    targetDetail.addEventListener("toggle", (e) => {
-      if (!targetDetail.open) {
-        // Find the parent containing this detail
-        const parentDetail =
-          targetDetail.closest("details")?.parentElement || document;
+    targetDetail.addEventListener("toggle", () => {
+      if (targetDetail.open) {
+        // find the common parent
+        const parent = targetDetail.parentElement;
 
-        // Find other <details> open at the same level
-        const siblingDetails = parentDetail.querySelectorAll("details");
+        if (!parent) return;
+
+        // Close other nested details in the same parent
+        const siblingDetails = parent.querySelectorAll("details");
 
         siblingDetails.forEach((sibling) => {
           if (sibling !== targetDetail && sibling.open) {
