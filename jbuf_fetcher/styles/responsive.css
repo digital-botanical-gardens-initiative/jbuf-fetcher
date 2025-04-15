@@ -1,0 +1,7 @@
+/* Responsive Design */
+@media (max-width: 1000px) {
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}

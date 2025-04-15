@@ -1,0 +1,49 @@
+/* Centered container */
+.container {
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 40px;
+  background: #d7dfd3;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Fixed layout for "species to collect" table */
+.fixed-layout-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Flexible layout for "unresolved species" table */
+.flexible-layout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  table-layout: auto;
+}
+
+.fixed-layout-table td,
+.fixed-layout-table th,
+.flexible-layout-table td,
+.flexible-layout-table th {
+  padding: 10px 15px;
+  border: 1px solid #666;
+}
+
+.fixed-layout-table th,
+.flexible-layout-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* Add hover effect for rows */
+.fixed-layout-table tr:hover,
+.flexible-layout-table tr:hover {
+  background-color: #dddcdc;
+}

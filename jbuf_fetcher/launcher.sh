@@ -23,10 +23,17 @@ mkdir -p $DATA_PATH
 mkdir -p $HTML_PATH
 mkdir -p $LOGS_PATH
 
-cp "./jbuf_fetcher/styles.css" "${HTML_PATH}/styles.css"
+
 cp "./jbuf_fetcher/scripts.js" "${HTML_PATH}/scripts.js"
 cp "./jbuf_fetcher/project_mappings.json" "${DATA_PATH}/project_mappings.json"
 cp -r "./images" "${HTML_PATH}"
+
+cat \
+    jbuf_fetcher/styles/global.css \
+    jbuf_fetcher/styles/layout.css \
+    jbuf_fetcher/styles/containers.css \
+    jbuf_fetcher/styles/components.css \
+    jbuf_fetcher/styles/responsive.css > "${HTML_PATH}/styles.css"
 
 # Clean logs folder if the used space is greater than 100MB
 SIZE_LIMIT_MB=5

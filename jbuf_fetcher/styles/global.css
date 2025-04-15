@@ -1,0 +1,64 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+/* Global body style */
+body {
+  font-family: Arial, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+/* Global heading style */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Specific styles for each level of heading */
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+/* Small text */
+
+.small-text {
+  font-size: 15px;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+/* Style for the plant name on the list */
+.plant-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  padding: 5px 0;
+}
