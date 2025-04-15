@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Callable, cast
 
 from dotenv import load_dotenv
-from yattag import Doc
+from yattag import Doc, SimpleDoc
 
 from jbuf_fetcher import utils
 
@@ -20,7 +20,7 @@ def generate_homepage() -> None:
     doc, tag, text = Doc().tagtext()
 
     # Make header
-    create_html_header(tag, text)
+    create_html_header(doc, tag, text)
 
     # Create buttons
     create_html_buttons(tag, text)
@@ -36,7 +36,7 @@ def generate_homepage() -> None:
 
 
 # Create the HTML header
-def create_html_header(tag: Callable[..., Any], text: Callable[[str], None]) -> None:
+def create_html_header(doc: SimpleDoc, tag: Callable[..., Any], text: Callable[[str], None]) -> None:
     with tag("html"), tag("head"):
         doc.stag("meta", charset="UTF-8")
         with tag("title"):
