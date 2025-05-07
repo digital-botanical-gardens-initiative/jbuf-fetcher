@@ -213,7 +213,7 @@ def create_project_details(
             tag=tag,
             text=text,
             species_list=no_more_in_garden,
-            list_name="Species collected but no more in the garden",
+            list_name=f"Species collected but no more in the garden ({len(no_more_in_garden)})",
             main_key="resolved_species",
         )
         create_classical_list(
