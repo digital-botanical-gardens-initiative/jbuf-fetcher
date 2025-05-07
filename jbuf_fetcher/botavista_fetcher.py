@@ -51,7 +51,7 @@ for code in botavista_codes:
                             print(f"{code} returned an empty CSV file and is ignored.")
                             continue
 
-                        colname = "acceptedDetermination"
+                        colname = "acquisitionName"
                         if colname not in df.columns:
                             print(f"{code} does not contain the column {colname}.")
                             continue
