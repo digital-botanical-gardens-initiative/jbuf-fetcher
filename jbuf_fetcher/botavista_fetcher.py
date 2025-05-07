@@ -1,6 +1,10 @@
+import io
 import json
 import os
+import zipfile
+from io import BytesIO, StringIO
 
+import pandas as pd
 import requests
 from dotenv import load_dotenv
 
@@ -21,39 +25,58 @@ json_file = []
 # Loop over projects
 for code in botavista_codes:
     # Construct url
-    url = f"https://botavista.com/api/cultivated/search/{code}?query=s"
+    url = f"https://botavista.com/csv/{code.upper()}"
     response = session.get(url)
+    print(f"Téléchargement de: https://botavista.com/csv/{code.upper()}")
+
     if response.status_code == 200:
-        if len(response.json()["data"]["aggregations"]["codeBcgi"]) == 1:
-            retrieved_code: str = response.json()["data"]["aggregations"]["codeBcgi"][0]["key"]
-            if code.upper() == retrieved_code.upper():
-                data = response.json()["data"]["results"]
-                for species in range(len(data)):
-                    sci_name = data[species]["name"]
-                    species_list = data[species]["list"]
-                    locations = []
-                    for specimen in range(len(species_list)):
-                        location = species_list[specimen]["place"]
-                        locations.append(location)
-                    element = {
-                        "species": sci_name,
-                        "qfield_project": utils.get_qfield_code_from_botavista_code(code),
-                        "locations": locations,
-                    }
-                    json_file.append(element)
+        try:
+            with zipfile.ZipFile(BytesIO(response.content)) as z:
+                print(f"{code}: Contenu du ZIP: {z.namelist()}")
+                csv_filename = z.namelist()[0]
+                # Unzip the ZIP file in memory
+                with zipfile.ZipFile(io.BytesIO(response.content)) as z:
+                    csv_filename = z.namelist()[0]
+                    with z.open(csv_filename) as f:
+                        content = f.read().decode("utf-8", errors="ignore")
 
-                print(f"{code} correctly fetched")
+                        if content.strip().startswith("<!DOCTYPE html>") or "Error" in content:
+                            print(f"{code} returned an error page instead of CSV.")
+                            continue
 
-            else:
-                print(f"{code} doesn't match {retrieved_code}")
-        else:
-            print(f"{code} seems to be absent from botavista")
+                        csv_io = StringIO(content)
+                        df = pd.read_csv(csv_io, sep=";", encoding="utf-8", engine="python", on_bad_lines="skip")
+
+                        if df.empty:
+                            print(f"{code} returned an empty CSV file and is ignored.")
+                            continue
+
+                        colname = "acceptedDetermination"
+                        if colname not in df.columns:
+                            print(f"{code} does not contain the column {colname}.")
+                            continue
+
+                        # Aadapt this part to the CSV structure
+                        grouped = df.groupby(colname)
+
+                        for species, group in grouped:
+                            locations = group["place"].dropna().unique().tolist()
+                            element = {
+                                "species": species,
+                                "qfield_project": utils.get_qfield_code_from_botavista_code(code),
+                                "locations": locations,
+                            }
+                            json_file.append(element)
+            print(f"{code} correctly fetched")
+        except Exception as e:
+            print(f"{code} ignoré (erreur: {e})")
+            continue
     else:
-        print(f"Error accessing data for {code}")
-
+        print(f"{code} ignored (status code: {response.status_code})")
+        continue
+# Save the JSON file
 data_path = str(os.getenv("DATA_PATH"))
 file_path = os.path.join(data_path, "botavista_data.json")
 
-# Write back to the file
 with open(file_path, "w") as f:
     json.dump(json_file, f, indent=4)
