@@ -60,7 +60,8 @@
   border-radius: 20px;
   position: relative;
   box-sizing: border-box;
-  margin-bottom: 10px; /* Espacement entre les projets */
+  margin-bottom: 10px; /* Space between projects */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .progress-bar {

@@ -34,7 +34,7 @@ h1 {
 
 h2 {
   font-size: 28px;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 h3 {
@@ -50,7 +50,7 @@ p {
 /* Small text */
 
 .small-text {
-  font-size: 15px;
+  font-size: 13px;
   color: #888;
   margin-bottom: 15px;
 }
@@ -61,4 +61,27 @@ p {
   font-weight: bold;
   color: #333;
   padding: 5px 0;
+}
+
+/* Style for subtitle */
+.section-subtitle {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Style for sample-box */
+.sample-box {
+  height: 30px;
+  background-color: white;
+  border-radius: 20px;
+  padding: 0px 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  margin: 10px 0;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 }

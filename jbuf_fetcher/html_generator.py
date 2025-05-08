@@ -119,22 +119,41 @@ def create_html_projects(tag: Callable[..., Any], text: Callable[[str], None]) -
     # Get report
     report_data = load_json_report()
 
+    # Load directus_data.json to get total sample count
+    data_folder = os.getenv("DATA_PATH") or ""
+    directus_path = os.path.join(data_folder, "directus_data.json")
+
+    try:
+        with open(directus_path, encoding="utf-8") as f:
+            directus_data = json.load(f)
+    except FileNotFoundError:
+        print(f"Warning: {directus_path} not found.")
+        directus_data = []
+
     # Create containers for projects
 
     for project_name, project_data in report_data.items():
+        # Filter directus data for each project
+        directus_data_filtered = [row for row in directus_data if row.get("qfield_project") == project_name]
+        total_samples_directus = len(directus_data_filtered)
+
         # Construct each project
-        create_html_project_container(tag, text, project_name, project_data)
+        create_html_project_container(tag, text, project_name, project_data, total_samples_directus)
 
 
 # Generate the HTML for each project
 def create_html_project_container(
-    tag: Callable[..., Any], text: Callable[[str], None], project_name: str, project_data: dict[str, Any]
+    tag: Callable[..., Any],
+    text: Callable[[str], None],
+    project_name: str,
+    project_data: dict[str, Any],
+    total_samples_directus: int,
 ) -> None:
     # Create a container for each project
     with tag("div", klass="container"):
         # Create header
         garden_name = utils.get_garden_names_from_qfield_code(project_name)
-        create_project_header(tag, text, garden_name)
+        create_project_header(tag, text, garden_name, total_samples_directus)
 
         # Create progressbar
         percentages = project_data.get("percentages", {})
@@ -145,13 +164,20 @@ def create_html_project_container(
         create_project_details(tag, text, project_data, project_name)
 
 
-def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], garden_name: str) -> None:
+def create_project_header(
+    tag: Callable[..., Any], text: Callable[[str], None], garden_name: str, total_samples_directus: int
+) -> None:
     with tag("h2"):
         text(f"Collection status for {garden_name}")
 
     # Put update date
     with tag("p", klass="small-text"):
         text(f'(Last update on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")})')
+
+    with tag("p", klass="section-subtitle"):
+        text("Total of samples collected")
+    with tag("div", klass="sample-box"):
+        text(f"{total_samples_directus} samples")
 
 
 def create_project_progressbar(
@@ -167,6 +193,10 @@ def create_project_progressbar(
     total_collected = totals.get("total_collected", 0)
     total_extracted = totals.get("total_extracted", 0)
     total_profiled = totals.get("total_profiled", 0)
+
+    # Subtitle
+    with tag("p", klass="section-subtitle"):
+        text("Percentage of species covered in the garden")
 
     # Create progressbar
     with tag("div", klass="progress-container"):
