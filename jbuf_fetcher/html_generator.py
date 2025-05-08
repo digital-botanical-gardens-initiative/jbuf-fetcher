@@ -138,7 +138,8 @@ def create_html_project_container(
 
         # Create progressbar
         percentages = project_data.get("percentages", {})
-        create_project_progressbar(tag, text, percentages)
+        totals = project_data
+        create_project_progressbar(tag, text, percentages, totals)
 
         # Create details
         create_project_details(tag, text, project_data, project_name)
@@ -154,12 +155,18 @@ def create_project_header(tag: Callable[..., Any], text: Callable[[str], None], 
 
 
 def create_project_progressbar(
-    tag: Callable[..., Any], text: Callable[[str], None], percentages: dict[str, float]
+    tag: Callable[..., Any], text: Callable[[str], None], percentages: dict[str, float], totals: dict[str, int]
 ) -> None:
     # Get the percentages value
     collected_percent = percentages.get("collected_percent", 0)
     extracted_percent = percentages.get("extracted_percent", 0)
     profiled_percent = percentages.get("profiled_percent", 0)
+
+    # Get total values
+    total_available = totals.get("total_available", 0)
+    total_collected = totals.get("total_collected", 0)
+    total_extracted = totals.get("total_extracted", 0)
+    total_profiled = totals.get("total_profiled", 0)
 
     # Create progressbar
     with tag("div", klass="progress-container"):
@@ -172,23 +179,33 @@ def create_project_progressbar(
 
     # Add a legend
     with tag("div", klass="legend"):
+        # profiled
         with tag("div", klass="legend-item"):
             with tag("span", klass="legend-circle", style="background-color: #00e600;"):
                 pass
             with tag("span", klass="legend-text"):
-                text(f"Profiled ({profiled_percent:.1f}%)")
+                text(f"{total_profiled} Profiled ({profiled_percent:.1f}%)")
 
+        # extracted
         with tag("div", klass="legend-item"):
             with tag("span", klass="legend-circle", style="background-color: #ffee00;"):
                 pass
             with tag("span", klass="legend-text"):
-                text(f"Extracted ({extracted_percent:.1f}%)")
+                text(f"{total_extracted} Extracted ({extracted_percent:.1f}%)")
 
+        # collected
         with tag("div", klass="legend-item"):
             with tag("span", klass="legend-circle", style="background-color: #ff9900;"):
                 pass
             with tag("span", klass="legend-text"):
-                text(f"Collected ({collected_percent:.1f}%)")
+                text(f"{total_collected} Collected ({collected_percent:.1f}%)")
+
+        # total
+        with tag("div", klass="legend-item"):
+            with tag("span", klass="legend-circle", style="background-color: #ffffff;"):
+                pass
+            with tag("span", klass="legend-text"):
+                text(f"{total_available} Total (100%)")
 
 
 def create_project_details(
