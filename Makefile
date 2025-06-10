@@ -15,6 +15,10 @@ check: ## Run code quality tools.
 	@poetry run mypy
 	@echo "🚀 Checking for obsolete dependencies: Running deptry"
 	@poetry run deptry .
+	@echo "🚀 TODO checking..."
+	@find . -type f -name "*.py" ! -path "./venv/*" ! -path "./.venv/*" \
+		! -path "./__pycache__/*" ! -path "./.mypy_cache/*" \
+		-exec grep -nH --color=always "TODO" {} \;
 
 .PHONY: test
 test: ## Test the code with pytest
