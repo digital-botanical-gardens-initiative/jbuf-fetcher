@@ -27,12 +27,10 @@ for code in botavista_codes:
     # Construct url
     url = f"https://botavista.com/csv/{code.upper()}"
     response = session.get(url)
-    print(f"Téléchargement de: https://botavista.com/csv/{code.upper()}")
 
     if response.status_code == 200:
         try:
             with zipfile.ZipFile(BytesIO(response.content)) as z:
-                print(f"{code}: Contenu du ZIP: {z.namelist()}")
                 csv_filename = z.namelist()[0]
                 # Unzip the ZIP file in memory
                 with zipfile.ZipFile(io.BytesIO(response.content)) as z:
@@ -74,6 +72,7 @@ for code in botavista_codes:
     else:
         print(f"{code} ignored (status code: {response.status_code})")
         continue
+
 # Save the JSON file
 data_path = str(os.getenv("DATA_PATH"))
 file_path = os.path.join(data_path, "botavista_data.json")

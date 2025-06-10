@@ -78,16 +78,6 @@ def create_merged_df(df_botavista: pd.DataFrame, df_directus: pd.DataFrame) -> p
         df_botavista, df_directus, on=["resolved_species", "qfield_project"], how="outer", indicator="indicator"
     )
 
-    # 🔍 Filtrage temporaire pour les fichiers de debug (jbuf uniquement)
-    df_botavista_jbuf = df_botavista[df_botavista["qfield_project"].str.contains("jbuf", case=False, na=False)]
-    df_directus_jbuf = df_directus[df_directus["qfield_project"].str.contains("jbuf", case=False, na=False)]
-    merged_df_jbuf = merged_df[merged_df["qfield_project"].str.contains("jbuf", case=False, na=False)]
-
-    # 💾 Sauvegarde des versions JBUF uniquement
-    df_botavista_jbuf.to_json(os.path.join(debug_dir, "botavista_jbuf.json"), orient="records", indent=2)
-    df_directus_jbuf.to_json(os.path.join(debug_dir, "directus_jbuf.json"), orient="records", indent=2)
-    merged_df_jbuf.to_json(os.path.join(debug_dir, "merged_jbuf.json"), orient="records", indent=2)
-
     return merged_df
 
 
@@ -117,14 +107,6 @@ def get_project_report(merged_df: pd.DataFrame, project: str) -> dict[str, Any]:
     directus_only = int(counts.get("right_only", 0))
     directus_only_json = directus_only_df.to_dict(orient="records")
     botavista_only_json = botavista_only_df.to_dict(orient="records")
-
-    # 🔍 Debug print
-    print(f"Total available : {total_available}")
-    print(f"Total collected : {total_collected}")
-    print(f"Total extracted : {total_extracted}")
-    print(f"Total profiled  : {total_profiled}")
-    print(f"Botavista only  : {botavista_only}")
-    print(f"Directus only   : {directus_only}")
 
     # Get percentages
     percentages = (
